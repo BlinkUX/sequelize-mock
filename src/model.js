@@ -2,7 +2,7 @@
 
 var Promise = require('bluebird'),
 	_ = require('lodash'),
-	Utils = require('./util'),
+	Utils = require('./utils'),
 	Instance = require('./instance');
 
 // Fake Model API
