@@ -56,3 +56,5 @@ Sequelize.prototype.transaction = function (fn) {
 Sequelize.prototype.literal = function (arg) {
 	return arg;
 };
+
+module.exports = Sequelize;
