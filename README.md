@@ -41,7 +41,7 @@ UserMock.findOne({
 	// `user` is a Sequelize Model-like object
 	user.get('id');         // Auto-Incrementing ID available on all Models
 	user.get('email');      // 'email@example.com'; Pulled from default values
-	user.get('username')';  // 'my-user'; Pulled from the `where` in the query
+	user.get('username');  // 'my-user'; Pulled from the `where` in the query
 	
 	user.myTestFunc(); // Will return 'Test User' as defined above
 	
