@@ -5,7 +5,7 @@ Once Mock models have been defined, the mock models should be drop in replacemen
 
 ## Example Usage
 
-```
+```javascript
 // Import the mock library
 var SequelizeMock = require('sequelize-mock');
 
@@ -19,7 +19,7 @@ var UserMock = DBConnectionMock.define('users', {
 		'picture': 'user-picture.jpg',
 	}, {
 		instanceMethods: {
-			getName: function () {
+			myTestFunc: function () {
 				return 'Test User';
 			},
 		},
@@ -38,20 +38,12 @@ UserMock.findOne({
 		username: 'my-user',
 	},
 }).then(function (user) {
-	// `user` is a Sequelize Model-like object with the following data
-	/*
-		{
-			'id': 1, // Auto-incrementing ID is returned with each object
-			
-			'email': 'email@example.com', // Default defined email is used
-			
-			'username': 'my-user', // Value pulled from query `where`
-			
-			'picture': 'user-picture.jpg' // Another default value
-		}
-	*/
+	// `user` is a Sequelize Model-like object
+	user.get('id');         // Auto-Incrementing ID available on all Models
+	user.get('email');      // 'email@example.com'; Pulled from default values
+	user.get('username')';  // 'my-user'; Pulled from the `where` in the query
 	
-	user.getName(); // Will return 'Test User' as defined above
+	user.myTestFunc(); // Will return 'Test User' as defined above
 	
 	user.getGroup(); // Will return a `GroupMock` object
 });
