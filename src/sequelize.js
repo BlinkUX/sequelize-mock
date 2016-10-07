@@ -14,6 +14,8 @@ Sequelize.prototype.Sequelize = Sequelize;
 Sequelize.prototype.Utils = Sequelize.Utils = require('./utils');
 Sequelize.prototype.Promise = Sequelize.Promise = bluebird;
 Sequelize.prototype.Model = Sequelize.Model = require('./model');
+
+// DATA TYPES
 Sequelize.STRING = function () {};
 Sequelize.CHAR = function () {};
 Sequelize.TEXT = function () {};
@@ -41,6 +43,24 @@ Sequelize.ENUM = function () {};
 Sequelize.ARRAY = function () {};
 Sequelize.GEOMETRY = function () {};
 Sequelize.GEOGRAPHY = function () {};
+
+// QUERY TYPES
+Sequelize.QueryTypes = {
+	// FROM https://github.com/sequelize/sequelize/blob/master/lib/query-types.js
+	SELECT: 'SELECT',
+	INSERT: 'INSERT',
+	UPDATE: 'UPDATE',
+	BULKUPDATE: 'BULKUPDATE',
+	BULKDELETE: 'BULKDELETE',
+	DELETE: 'DELETE',
+	UPSERT: 'UPSERT',
+	VERSION: 'VERSION',
+	SHOWTABLES: 'SHOWTABLES',
+	SHOWINDEXES: 'SHOWINDEXES',
+	DESCRIBE: 'DESCRIBE',
+	RAW: 'RAW',
+	FOREIGNKEYS: 'FOREIGNKEYS',
+};
 
 Sequelize.prototype.define = function (name, obj, opts) {
 	return new Model(name, obj, opts);
