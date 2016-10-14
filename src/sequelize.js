@@ -13,7 +13,7 @@ Sequelize.options = {hooks: {}};
 Sequelize.prototype.Sequelize = Sequelize;
 Sequelize.prototype.Utils = Sequelize.Utils = require('./utils');
 Sequelize.prototype.Promise = Sequelize.Promise = bluebird;
-Sequelize.prototype.Model = Sequelize.Model = require('./model');
+Sequelize.prototype.Model = Sequelize.Model = Model;
 
 // DATA TYPES
 Sequelize.STRING = function () {};
