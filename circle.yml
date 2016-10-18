@@ -7,5 +7,7 @@ machine:
   timezone:
     America/Los_Angeles
 test:
+  override:
+    - npm test
   post:
     - npm run coverage
