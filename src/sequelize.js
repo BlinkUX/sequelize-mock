@@ -1,7 +1,11 @@
 'use strict';
 
 var bluebird = require('bluebird'),
-	Model = require('./model');
+	Model = require('./model'),
+	Utils = require('./utils');
+
+function noop() {}
+function noopPromise() { return bluebird.resolve(); }
 
 function Sequelize() {
 	
@@ -11,38 +15,38 @@ Sequelize.version = require('../package.json').version;
 Sequelize.options = {hooks: {}};
 
 Sequelize.prototype.Sequelize = Sequelize;
-Sequelize.prototype.Utils = Sequelize.Utils = require('./utils');
+Sequelize.prototype.Utils = Sequelize.Utils = Utils;
 Sequelize.prototype.Promise = Sequelize.Promise = bluebird;
 Sequelize.prototype.Model = Sequelize.Model = Model;
 
 // DATA TYPES
-Sequelize.STRING = function () {};
-Sequelize.CHAR = function () {};
-Sequelize.TEXT = function () {};
-Sequelize.INTEGER = function () {};
-Sequelize.BIGINT = function () {};
-Sequelize.FLOAT = function () {};
-Sequelize.REAL = function () {};
-Sequelize.DOUBLE = function () {};
-Sequelize.DECIMAL = function () {};
-Sequelize.BOOLEAN = function () {};
-Sequelize.TIME = function () {};
-Sequelize.DATE = function () {};
-Sequelize.DATEONLY = function () {};
-Sequelize.HSTORE = function () {};
-Sequelize.JSON = function () {};
-Sequelize.JSONB = function () {};
-Sequelize.NOW = function () {};
-Sequelize.BLOB = function () {};
-Sequelize.RANGE = function () {};
-Sequelize.UUID = function () {};
-Sequelize.UUIDV1 = function () {};
-Sequelize.UUIDV4 = function () {};
-Sequelize.VIRTUAL = function () {};
-Sequelize.ENUM = function () {};
-Sequelize.ARRAY = function () {};
-Sequelize.GEOMETRY = function () {};
-Sequelize.GEOGRAPHY = function () {};
+Sequelize.STRING    = noop;
+Sequelize.CHAR      = noop;
+Sequelize.TEXT      = noop;
+Sequelize.INTEGER   = noop;
+Sequelize.BIGINT    = noop;
+Sequelize.FLOAT     = noop;
+Sequelize.REAL      = noop;
+Sequelize.DOUBLE    = noop;
+Sequelize.DECIMAL   = noop;
+Sequelize.BOOLEAN   = noop;
+Sequelize.TIME      = noop;
+Sequelize.DATE      = noop;
+Sequelize.DATEONLY  = noop;
+Sequelize.HSTORE    = noop;
+Sequelize.JSON      = noop;
+Sequelize.JSONB     = noop;
+Sequelize.NOW       = noop;
+Sequelize.BLOB      = noop;
+Sequelize.RANGE     = noop;
+Sequelize.UUID      = noop;
+Sequelize.UUIDV1    = noop;
+Sequelize.UUIDV4    = noop;
+Sequelize.VIRTUAL   = noop;
+Sequelize.ENUM      = noop;
+Sequelize.ARRAY     = noop;
+Sequelize.GEOMETRY  = noop;
+Sequelize.GEOGRAPHY = noop;
 
 // QUERY TYPES
 Sequelize.QueryTypes = {
