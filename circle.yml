@@ -1,7 +1,3 @@
-machine:
-  timezone:
-    America/Los_Angeles # Set the timezone
-
 test:
   post:
     - npm run coverage
