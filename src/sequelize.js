@@ -74,7 +74,7 @@ Sequelize.prototype.query = function () {
 };
 Sequelize.prototype.transaction = function (fn) {
 	return new bluebird(function (resolve, reject) {
-		return fn({}).then(resolve, reject);
+		return (fn || noopPromise)({}).then(resolve, reject);
 	});
 };
 Sequelize.prototype.literal = function (arg) {
