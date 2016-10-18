@@ -4,7 +4,8 @@
   "description": "A simple mock interface specifically for testing code relying on Sequelize models",
   "main": "src/index.js",
   "scripts": {
-    "test": "nyc mocha"
+    "test": "nyc mocha",
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
   },
   "repository": {
     "type": "git",
@@ -28,6 +29,7 @@
     "lodash": "^4.16.4"
   },
   "devDependencies": {
+    "coveralls": "^2.11.14",
     "istanbul": "^0.4.5",
     "mocha": "^3.1.2",
     "nyc": "^8.3.1",
@@ -35,8 +37,12 @@
     "should": "^11.1.1"
   },
   "nyc": {
-    "exclude": ["src/index.js"],
-    "include": ["src/**/*.js"],
+    "exclude": [
+      "src/index.js"
+    ],
+    "include": [
+      "src/**/*.js"
+    ],
     "all": true
   }
 }
