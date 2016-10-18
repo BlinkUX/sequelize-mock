@@ -1,3 +1,4 @@
+---
 test:
   post:
-    - npm run coverage
+    - "npm run coverage"
