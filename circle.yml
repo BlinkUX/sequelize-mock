@@ -1,4 +1,11 @@
----
+general:
+  artifacts:
+    - "coverage"
+machine:
+  node:
+    version: 5.9.1
+  timezone:
+    America/Los_Angeles
 test:
   post:
-    - "npm run coverage"
+    - npm run coverage
