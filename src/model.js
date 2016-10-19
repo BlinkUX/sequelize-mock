@@ -63,6 +63,7 @@ fakeModel.prototype.max = function (field) {
 	return Promise.resolve(this._defaults[field]);
 }
 //
+fakeModel.prototype.insertOrUpdate =
 fakeModel.prototype.upsert = function () {
 	return Promise.resolve(!!this._wasCreated);
 }

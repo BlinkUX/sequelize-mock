@@ -1,5 +1,6 @@
 vNext
   * Add `Model.unscoped()`
+  * Add `Model.insertOrUpdate()` as alias for `Model.upsert()`
   * Fix for `Sequelize.Utils.lowercaseFirst()`
   * Fix `Model.update()` affected rows return value to be array
 
