@@ -63,6 +63,13 @@ describe('Sequelize', function () {
 		Sequelize.should.have.property('GEOGRAPHY').which.is.a.Function();
 	});
 	
+	describe('#define', function () {
+		it('should return a Mock Model', function () {
+			var seq = new Sequelize();
+			seq.define().should.be.instanceOf(ModelMock);
+		});
+	});
+	
 	describe('#query', function () {
 		it('should throw an error when calling query', function (done) {
 			var seq = new Sequelize();
@@ -72,15 +79,6 @@ describe('Sequelize', function () {
 				err.message.indexOf('requires test specific configuration').should.be.above(-1);
 				done();
 			}).catch(done);
-		});
-	});
-	
-	describe('#literal', function () {
-		it('should simply return the argument for the literal function', function () {
-			var seq = new Sequelize();
-			seq.literal('Test').should.equal('Test');
-			var obj = {};
-			seq.literal(obj).should.equal(obj);
 		});
 	});
 	
@@ -95,6 +93,23 @@ describe('Sequelize', function () {
 				count.should.equal(1);
 				done()
 			}).catch(done);
+		});
+		
+		it('should return a promise object when no function is passed in', function (done) {
+			var seq = new Sequelize();
+			seq.transaction().then(function (transaction) {
+				should.exist(transaction);
+				done()
+			}).catch(done);
+		});
+	});
+	
+	describe('#literal', function () {
+		it('should simply return the argument for the literal function', function () {
+			var seq = new Sequelize();
+			seq.literal('Test').should.equal('Test');
+			var obj = {};
+			seq.literal(obj).should.equal(obj);
 		});
 	});
 	
