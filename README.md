@@ -1,4 +1,6 @@
 # Sequelize Mock
+[![npm](https://img.shields.io/npm/v/sequelize-mock.svg)](https://www.npmjs.com/package/sequelize-mock) [![CircleCI](https://img.shields.io/circleci/project/BlinkUX/sequelize-mock.svg)](https://circleci.com/gh/BlinkUX/sequelize-mock) [![Coveralls](https://img.shields.io/coveralls/BlinkUX/sequelize-mock.svg)](https://coveralls.io/github/BlinkUX/sequelize-mock) [![MIT License](https://img.shields.io/github/license/BlinkUX/sequelize-mock.svg)](https://github.com/BlinkUX/sequelize-mock)
+
 A simple mocking interface designed for applications that use the [sequelize.js](http://sequelizejs.com) library. This library is specifically for testing code relying on Sequelize models **and is therefore a very bare library at the moment**. The more complex functionality of Sequelize has not been included and the library will likely be fleshed out to include this functionality as needed.
 
 Once Mock models have been defined, the mock models should be drop in replacements for your Sequelize model objects. Data is not retrieved from a database and instead is returned based on the setup of the mock objects, the query being made, and other applied or included information.
