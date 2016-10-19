@@ -22,7 +22,8 @@ function fakeModel (name, defaults, opts) {
 	this.Instance.prototype = this._functions;
 }
 //
-fakeModel.prototype.scope = function () { return this; };
+fakeModel.prototype.scope =
+fakeModel.prototype.unscoped = function () { return this; };
 //
 fakeModel.prototype.sync = function () { return Promise.resolve(this); };
 //

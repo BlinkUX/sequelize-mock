@@ -1,4 +1,5 @@
 vNext
+  * Add `Model.unscoped()`
   * Fix for `Sequelize.Utils.lowercaseFirst()`
   * Fix `Model.update()` affected rows return value to be array
 
