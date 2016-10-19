@@ -5,7 +5,6 @@ var bluebird = require('bluebird'),
 	Utils = require('./utils');
 
 function noop() {}
-function noopPromise() { return bluebird.resolve(); }
 
 function Sequelize() {
 	
