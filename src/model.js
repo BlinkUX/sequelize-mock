@@ -83,6 +83,7 @@ fakeModel.prototype.getTableName = function () {
 fakeModel.prototype.addHook =
 fakeModel.prototype.removeHook = function () {};
 
+// Associations
 fakeModel.prototype.belongsTo = fakeModel.prototype.hasOne = function (item, options) {
 	if(!(item instanceof fakeModel)) {
 		return;
@@ -111,6 +112,7 @@ fakeModel.prototype.belongsTo = fakeModel.prototype.hasOne = function (item, opt
 	this._functions['set' + singular] = noop;
 	this._functions['create' + singular] = item.create ? item.create.bind(item) : noop;
 };
+
 fakeModel.prototype.belongsToMany = fakeModel.prototype.hasMany = function (item, options) {
 	if(!(item instanceof fakeModel)) {
 		return {
