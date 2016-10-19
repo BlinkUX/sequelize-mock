@@ -17,6 +17,17 @@ describe('Instance', function () {
 			inst._values.should.have.property('createdAt');
 			inst._values.should.have.property('updatedAt');
 		});
+		it('should not override passed in id, createdAt, and updatedAt values', function () {
+			var inst = new Instance({}, {
+				id: 5555,
+				createdAt: 'Yesterday',
+				updatedAt: 'Yesterday',
+			});
+			
+			inst._values.should.have.property('id').which.is.exactly(5555);
+			inst._values.should.have.property('createdAt').which.is.exactly('Yesterday');
+			inst._values.should.have.property('updatedAt').which.is.exactly('Yesterday');
+		});
 		
 		it('should assign any default values', function () {
 			var inst = new Instance({
