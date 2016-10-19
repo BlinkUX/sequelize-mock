@@ -73,8 +73,14 @@ Sequelize.prototype.query = function () {
 	return bluebird.reject(new Error('This function requires test specific configuration as it is too broad to generalize'));
 };
 Sequelize.prototype.transaction = function (fn) {
+	if(!fn) {
+		fn = function (t) {
+			return bluebird.resolve(t);
+		};
+	}
 	return new bluebird(function (resolve, reject) {
-		return (fn || noopPromise)({}).then(resolve, reject);
+		// TODO Return mock transaction object
+		return fn({}).then(resolve, reject);
 	});
 };
 Sequelize.prototype.literal = function (arg) {
