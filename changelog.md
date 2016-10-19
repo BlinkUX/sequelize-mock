@@ -1,3 +1,5 @@
+# Changelog
+
 vNext
   * Add `Model.unscoped()`
   * Add `Model.insertOrUpdate()` as alias for `Model.upsert()`
