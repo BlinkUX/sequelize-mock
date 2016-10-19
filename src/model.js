@@ -64,10 +64,10 @@ fakeModel.prototype.max = function (field) {
 }
 //
 fakeModel.prototype.upsert = function () {
-	return Promise.resolve(true);
+	return Promise.resolve(!!this._wasCreated);
 }
 fakeModel.prototype.findOrCreate = function (obj) {
-	return Promise.resolve( [this.generateTestModel(obj.where), this._wasCreated] );
+	return Promise.resolve( [this.generateTestModel(obj.where), !!this._wasCreated] );
 };
 //
 fakeModel.prototype.findAll =  function (obj) {
