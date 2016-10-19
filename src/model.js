@@ -41,7 +41,7 @@ fakeModel.prototype.generateModelPromise = function (obj) {
 };
 //
 fakeModel.prototype.update = function (obj) {
-	return Promise.resolve([ 1, this.generateTestModel(obj) ]);
+	return Promise.resolve([ 1, [this.generateTestModel(obj)] ]);
 };
 fakeModel.prototype.generateModelsPromises = function (obj) {
 	return Promise.resolve([ this.generateTestModel(obj) ]);
