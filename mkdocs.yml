@@ -1,4 +1,5 @@
 site_name: Sequelize Mock
+site_author: Blink UX
 site_description: Sequelize Mock is a Mocking Library for code relying on Sequelize ORM Models
 site_favicon: favicon.png
 site_url: http://sequelize-mock.readthedocs.io/
