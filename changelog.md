@@ -1,5 +1,8 @@
 # Changelog
 
+vNext
+  * Add Sequelize Error object mocks
+
 v0.5.1 - b9a34d2 - Nov 4th 2016
   * Add `Model.unscoped()`
   * Add `Model.insertOrUpdate()` as alias for `Model.upsert()`

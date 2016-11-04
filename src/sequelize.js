@@ -1,8 +1,10 @@
 'use strict';
 
-var bluebird = require('bluebird'),
+var _ = require('lodash'),
+	bluebird = require('bluebird'),
 	Model = require('./model'),
-	Utils = require('./utils');
+	Utils = require('./utils'),
+	Errors = require('./errors');
 
 function noop() {}
 
@@ -17,6 +19,15 @@ Sequelize.prototype.Sequelize = Sequelize;
 Sequelize.prototype.Utils = Sequelize.Utils = Utils;
 Sequelize.prototype.Promise = Sequelize.Promise = bluebird;
 Sequelize.prototype.Model = Sequelize.Model = Model;
+
+// Errors
+_.each(Errors, function (fn, name) {
+	if(name == 'BaseError') {
+		// Aliased to Error for some reason...
+		name = 'Error';
+	}
+	Sequelize.prototype[name] = Sequelize[name] = fn;
+});
 
 // DATA TYPES
 Sequelize.STRING    = noop;

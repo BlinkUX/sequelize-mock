@@ -9,10 +9,15 @@ var UtilsMock = {};
 var PackageMock = {
 	version: 'test',
 };
+var ErrorMock = {
+	'BaseError': function () { return 'base error'; },
+	'OtherError': function () { return 'base error'; },
+};
 
 var Sequelize = proxyquire('../src/sequelize', {
-	'./model' : ModelMock,
-	'./utils' : UtilsMock,
+	'./model'  : ModelMock,
+	'./utils'  : UtilsMock,
+	'./errors' : ErrorMock,
 	'../package.json' : PackageMock
 });
 
@@ -31,6 +36,16 @@ describe('Sequelize', function () {
 		seq.should.have.property('Utils').which.is.equal(UtilsMock);
 		seq.should.have.property('Promise').which.is.equal(bluebird);
 		seq.should.have.property('Model').which.is.equal(ModelMock);
+	});
+	
+	it('should have Error classes exposed on class and prototype', function () {
+		Sequelize.should.have.property('OtherError').which.is.equal(ErrorMock.OtherError);
+		Sequelize.prototype.should.have.property('OtherError').which.is.equal(ErrorMock.OtherError);
+	});
+	
+	it('should alias BaseError class', function () {
+		Sequelize.should.have.property('Error').which.is.equal(ErrorMock.BaseError);
+		Sequelize.prototype.should.have.property('Error').which.is.equal(ErrorMock.BaseError);
 	});
 	
 	it('should have data types exposed on class', function () {
