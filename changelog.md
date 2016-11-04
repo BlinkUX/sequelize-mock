@@ -1,6 +1,6 @@
 # Changelog
 
-vNext
+v0.5.1 - Nov 4th 2016
   * Add `Model.unscoped()`
   * Add `Model.insertOrUpdate()` as alias for `Model.upsert()`
   * Fix for `Sequelize.Utils.lowercaseFirst()`
