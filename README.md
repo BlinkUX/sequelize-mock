@@ -1,20 +1,33 @@
 # Sequelize Mock
 [![npm](https://img.shields.io/npm/v/sequelize-mock.svg)](https://www.npmjs.com/package/sequelize-mock) [![CircleCI](https://img.shields.io/circleci/project/BlinkUX/sequelize-mock.svg)](https://circleci.com/gh/BlinkUX/sequelize-mock) [![Coveralls](https://img.shields.io/coveralls/BlinkUX/sequelize-mock.svg)](https://coveralls.io/github/BlinkUX/sequelize-mock) [![MIT License](https://img.shields.io/github/license/BlinkUX/sequelize-mock.svg)](https://github.com/BlinkUX/sequelize-mock)
 
-A simple mocking interface designed for applications that use the [sequelize.js](http://sequelizejs.com) library. This library is specifically for testing code relying on Sequelize models **and is therefore a very bare library at the moment**. The more complex functionality of Sequelize has not been included and the library will likely be fleshed out to include this functionality as needed.
+A simple mocking interface designed for applications that use the [sequelize.js](http://sequelizejs.com) library. Specifically, this library was created for unit testing code which relies on Sequelize Models.
 
-Once Mock models have been defined, the mock models should be drop in replacements for your Sequelize model objects. Data is not retrieved from a database and instead is returned based on the setup of the mock objects, the query being made, and other applied or included information.
+## Install
 
-## Example Usage
+```
+npm i sequelize-mock --save-dev
+```
+
+## Getting Started
+
+The Mock Models created with this library function as drop in replacements for your unit testing.
+
+Start by importing the library
 
 ```javascript
-// Import the mock library
 var SequelizeMock = require('sequelize-mock');
+```
 
-// Setup the mock database connection
+Initialize the library as you would Sequelize
+
+```javascript
 var DBConnectionMock = new SequelizeMock();
+```
 
-// Define our Model
+Define your models
+
+```javascript
 var UserMock = DBConnectionMock.define('users', {
 		'email': 'email@example.com',
 		'username': 'blink',
@@ -26,15 +39,13 @@ var UserMock = DBConnectionMock.define('users', {
 			},
 		},
 	});
+```
 
-// You can also associate mock models as well
-var GroupMock = DBConnectionMock.define('groups', {
-	'name': 'My Awesome Group',
-});
+Once Mock models have been defined, you can use them as drop-in replacements for your Sequelize model objects. Data is not retrieved from a database and instead is returned based on the setup of the mock objects, the query being made, and other applied or included information.
 
-UserMock.belongsTo(GroupMock);
+For example, your code might look something like this
 
-// From there we can start using it like a normal model
+```javascript
 UserMock.findOne({
 	where: {
 		username: 'my-user',
@@ -43,14 +54,16 @@ UserMock.findOne({
 	// `user` is a Sequelize Model-like object
 	user.get('id');         // Auto-Incrementing ID available on all Models
 	user.get('email');      // 'email@example.com'; Pulled from default values
-	user.get('username');  // 'my-user'; Pulled from the `where` in the query
+	user.get('username');   // 'my-user'; Pulled from the `where` in the query
 	
-	user.myTestFunc(); // Will return 'Test User' as defined above
-	
-	user.getGroup(); // Will return a `GroupMock` object
+	user.myTestFunc();      // Will return 'Test User' as defined above
 });
 ```
 
-# License
+## Contributing
+
+This library is under active development, so you should feel free to submit issues, questions, or pull requests.
+
+## License
 
 Created by Blink UX and licensed under the MIT license. Check the LICENSE file for more information.
