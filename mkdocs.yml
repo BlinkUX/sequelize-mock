@@ -14,5 +14,6 @@ pages:
 - Documentation:
   - 'Getting Started': 'docs/getting-started.md'
   - 'Creating Mock Objects': 'docs/creating-mocks.md'
+  - 'Mock Object Validation': 'docs/mock-validation.md'
 #- Misc:
 #  - 'Changelog': 'changelog.md'
