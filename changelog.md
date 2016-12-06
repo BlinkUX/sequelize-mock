@@ -1,6 +1,6 @@
 # Changelog
 
-v0.6.0 - Dec 6th 2016
+v0.6.0 - 4315930 - Dec 6th 2016
   * Add Sequelize Error object mocks
   * Add `validate()` function + calls in the appropriate places
   * Add `$addValidationError(col[, message[, type]])` to Instances which will trigger a validation error on the next call to `.validate()` from any of places it can be called
