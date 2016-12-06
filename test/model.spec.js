@@ -5,6 +5,7 @@ var bluebird = require('bluebird');
 var proxyquire = require('proxyquire').noCallThru();
 
 var InstanceMock = function () { this._args = arguments; };
+InstanceMock.prototype.save = function () { return bluebird.resolve(this); };
 var UtilsMock = {
 	uppercaseFirst: function (str) { return str; },
 	singularize: function (str) { return str; },

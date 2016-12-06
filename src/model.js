@@ -36,9 +36,11 @@ fakeModel.prototype.generateTestModel = function (obj) {
 	return item;
 };
 //
-fakeModel.prototype.create =
 fakeModel.prototype.generateModelPromise = function (obj) {
 	return Promise.resolve( this.generateTestModel(obj) );
+};
+fakeModel.prototype.create = function (obj) {
+	return this.generateTestModel(obj).save();
 };
 //
 fakeModel.prototype.update = function (obj) {

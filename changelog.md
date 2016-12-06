@@ -2,6 +2,10 @@
 
 vNext
   * Add Sequelize Error object mocks
+  * Add `validate()` function + calls in the appropriate places
+  * Add `$addValidationError(col[, message[, type]])` to Instances which will trigger a validation error on the next call to `.validate()` from any of places it can be called
+  * Add `$removeValidationError(col)` to Instances which will remove any validation errors for that column
+  * Add `$clearValidationErrors()` to Instances which removes all validation errors from all of the columns
 
 v0.5.1 - b9a34d2 - Nov 4th 2016
   * Add `Model.unscoped()`
