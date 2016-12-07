@@ -9,7 +9,7 @@ var id = 0;
 // Fake Instance API
 function fakeModelInstance (defaults, obj) {
 	id++;
-	this._values = obj || {};
+	this._values = _.clone(obj || {});
 	_.defaultsDeep(this._values, defaults || {});
 	this._values.id = this._values.id || id;
 	this._values.createdAt = this._values.createdAt || new Date();

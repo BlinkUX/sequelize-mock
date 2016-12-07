@@ -1,5 +1,8 @@
 # Changelog
 
+vNext
+  * Fix `Instance` initialization modifying the original passed in object
+
 v0.6.0 - 4315930 - Dec 6th 2016
   * Add Sequelize Error object mocks
   * Add `validate()` function + calls in the appropriate places

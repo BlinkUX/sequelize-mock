@@ -31,6 +31,20 @@ describe('Instance', function () {
 			inst._values.should.have.property('createdAt');
 			inst._values.should.have.property('updatedAt');
 		});
+		it('should not modify the passed in objects', function () {
+			var defaults = {
+					defKey: 'value',
+				},
+				values = {
+					instKey: 'value',
+				};
+			var inst = new Instance(defaults, values);
+			
+			values.should.have.property('instKey');
+			values.should.not.have.property('defKey');
+			defaults.should.have.property('defKey');
+			defaults.should.not.have.property('instKey');
+		});
 		it('should not override passed in id, createdAt, and updatedAt values', function () {
 			var inst = new Instance({}, {
 				id: 5555,
