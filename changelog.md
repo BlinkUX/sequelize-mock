@@ -1,6 +1,6 @@
 # Changelog
 
-v0.6.1 - Dec 7th 2016
+v0.6.1 - d65cbc9 - Dec 7th 2016
   * Fix `Instance` initialization modifying the original passed in object
 
 v0.6.0 - 4315930 - Dec 6th 2016
