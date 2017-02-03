@@ -14,3 +14,4 @@ exports.singularize = function(str) {
 exports.pluralize = function(str) {
 	return inflection.pluralize(str);
 };
+exports._ = exports.lodash = require('lodash');

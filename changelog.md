@@ -5,6 +5,7 @@ vNext
   * Add `Instance.set()` Object parameter support
   * Add `Instance.get()` no parameter support to get a cloned Object of all of the values
   * Add `Instance.destroy()` will now set a `deletedAt` property to the current date
+  * Add `Sequelize.Utils._` which points to the lodash library
   * *DEV* Added documentation generation via `npm run docs-gen`
 
 v0.6.1 - d65cbc9 - Dec 7th 2016
