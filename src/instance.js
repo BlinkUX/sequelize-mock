@@ -43,12 +43,12 @@ var id = 0;
 function fakeModelInstance (defaults, obj) {
 	id++;
 	/**
-	 * As with Sequelize, we include a `_values` property which contains the valuse for the
-	 * instance. As with Sequelize, you should use other methods to edit the values via code
-	 * that will also interact with Sequelize.
+	 * As with Sequelize, we include a `_values` property which contains the values for the
+	 * instance. As with Sequelize, you should use other methods to edit the values for any
+	 * code that will also interact with Sequelize.
 	 * 
-	 * For test code, when possible, you should use other means to validate. But this object
-	 * is also available if needed.
+	 * For test code, when possible, we also recommend you use other means to validate. But
+	 * this object is also available if needed.
 	 * 
 	 * @member {Object}
 	 **/
@@ -155,7 +155,7 @@ fakeModelInstance.prototype.set = function(key, val) {
 		// Loop over the object and perform a set for each key/value pair
 		var self = this;
 		_.each(key, function (value, key) {
-			this._values[key] = value;
+			self._values[key] = value;
 		});
 	} else {
 		this._values[key] = val;
