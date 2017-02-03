@@ -7,6 +7,15 @@ var path = require('path'),
 	dox = require('dox'),
 	pkg = require('../package.json');
 
+var DOCUMENTATION_ORDER = {
+	'Sequelize': 1,
+	'Model': 2,
+	'Instance': 3,
+	'DataTypes': 4,
+	'Errors': 5,
+	'Utils': 6,
+};
+
 /**	DocFile
  *	
  *	Wrapper for file that we are generativng documentation for. Will
@@ -325,9 +334,16 @@ var saveFiles = renderFiles.then(function (renderedFiles) {
 			function (err, contents) {
 				if(err) return reject(err);
 				
+				var fileList = _.sortBy(renderedFiles, function (file) {
+					return DOCUMENTATION_ORDER[file.name] || 1000;
+				});
+				
+				fileList = _.map(fileList, function (file) {
+					return "  - '" + file.name + "': 'api/" + file.renderedFileName + "'";
+				}).join('\n')
 				
 				contents = contents.replace(/### API PAGES START[^]+### API PAGES END/m, '### API PAGES START\n' +
-					_.map(renderedFiles, function (file) { return "  - '" + file.name + "': 'api/" + file.renderedFileName + "'" }).join('\n') + '\n' +
+					fileList + '\n' +
 					'### API PAGES END');
 				
 				fs.writeFile(
