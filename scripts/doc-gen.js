@@ -208,7 +208,6 @@ DocComment.prototype.render = function () {
 			output += 'Name | Type | Description\n';
 			output += '--- | --- | ---\n';
 			_.each(parameters, function (param) {
-				console.log(param);
 				output += param.name + ' | ' + DocComment.printableTypeList(param) + ' | ' + param.description;
 				output += '\n';
 			});
