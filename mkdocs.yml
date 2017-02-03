@@ -15,5 +15,14 @@ pages:
   - 'Getting Started': 'docs/getting-started.md'
   - 'Creating Mock Objects': 'docs/creating-mocks.md'
   - 'Mock Object Validation': 'docs/mock-validation.md'
+- API:
+### API PAGES START
+  - 'Sequelize': 'api/sequelize.md'
+  - 'Model': 'api/model.md'
+  - 'Instance': 'api/instance.md'
+  - 'DataTypes': 'api/data-types.md'
+  - 'Errors': 'api/errors.md'
+  - 'Utils': 'api/utils.md'
+### API PAGES END
 #- Misc:
 #  - 'Changelog': 'changelog.md'
