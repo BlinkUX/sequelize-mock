@@ -107,6 +107,8 @@ DocComment.prototype.getParams = function () {
 DocComment.prototype.getType = function () {
 	if(this.getTag('fileOverview') || this.getTag('file'))
 		return 'file';
+	if(this.getTag('method'))
+		return 'method';
 	return this.data.ctx.type;
 };
 
@@ -142,7 +144,7 @@ DocComment.prototype.render = function () {
 		
 		if(text.startsWith('{@link')) {
 			text = text.slice(0, text.length - 1).replace(/\{@link\s*/, '');
-			return '[' + prefix + text + suffix + '](#' + text + ')';
+			return '[' + prefix + text + suffix + '](#' + text.replace(/[^0-9a-zA-Z]/g, '') + ')';
 		}
 		return prefix + text + suffix;
 	}
@@ -155,7 +157,7 @@ DocComment.prototype.render = function () {
 			this.file.name = this.getName();
 		}
 	} else {
-		output += '<a name="' + this.getName() + '"></a>\n';
+		output += '<a name="' + this.getName().replace(/[^0-9a-zA-Z]/g, '') + '"></a>\n';
 		
 		if(type === 'constructor' || type === 'method') {
 			output += firstLevelHeader + methodPrefix + (type === 'constructor' ? 'new ' : '') + this.getName();
@@ -192,12 +194,21 @@ DocComment.prototype.render = function () {
 		output += '';
 	}
 	
+	if(this.getTags('example').length) {
+		output += '\n\n';
+		output += '**Example**\n\n';
+		output += _.map(this.getTags('example'), function (extendsItem) {
+				return '```javascript\n' + extendsItem.string + '\n```';
+			}).join(', ');
+		output += '';
+	}
+	
 	if(this.getTags('see').length) {
 		output += '\n\n';
 		output += '**See**\n\n';
 		output += _.map(this.getTags('see'), function (seeItem) {
 			return ' - ' + linkText(seeItem.string);
-		}).join(', ');
+		}).join('\n');
 	}
 	
 	if(type === 'constructor' || type === 'method') {
