@@ -98,7 +98,7 @@ Returns <String> The specified dialect
 
 
 <a name="define"></a>
-## define(name, obj, [opts]) -> Model
+## define(name, [obj={}], [opts]) -> Model
 
 Define a new mock Model. You should provide a name and a set of default values for this
 new Model. The default values will be used any time a new Instance of this model is
@@ -132,7 +132,7 @@ sequelize.define('user', {
 Name | Type | Description
 --- | --- | ---
 name | String | Name of the mock Model
-obj | Object | Map of keys and their default values that will be used when querying against this object
+[obj={}] | Object | Map of keys and their default values that will be used when querying against this object
 [opts] | Object | Options for the mock model
 [opts.instanceMethods] | Object | Map of function names and the functions to be run. These functions will be added to any instances of this Model type
 

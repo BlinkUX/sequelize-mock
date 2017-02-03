@@ -179,7 +179,7 @@ Sequelize.prototype.getDialect = function() {
  * 
  * @see Model
  * @param {String} name Name of the mock Model
- * @param {Object} obj Map of keys and their default values that will be used when querying against this object
+ * @param {Object} [obj={}] Map of keys and their default values that will be used when querying against this object
  * @param {Object} [opts] Options for the mock model
  * @param {Object} [opts.instanceMethods] Map of function names and the functions to be run. These functions will be added to any instances of this Model type
  * @return {Model} Mock Model as defined by the name, default values, and options provided
