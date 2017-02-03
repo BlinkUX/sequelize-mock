@@ -1,6 +1,6 @@
 # Changelog
 
-vNext
+v0.7.0 - Feb 3rd 2017
   * Add `Model.bulkCreate()` support
   * Add `Instance.set()` Object parameter support
   * Add `Instance.get()` no parameter support to get a cloned Object of all of the values
