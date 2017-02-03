@@ -33,7 +33,7 @@ DocFile.prototype.process = function () {
 	
 	this.comments = [];
 	_.each(rawComments, function (rawComment) {
-		if(rawComment.ctx) {
+		if(rawComment.ctx && !rawComment.isPrivate) {
 			self.comments.push( new DocComment(rawComment, self) );
 		}
 	});
