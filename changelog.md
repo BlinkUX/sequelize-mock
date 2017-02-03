@@ -2,6 +2,7 @@
 
 vNext
   * Add `Model.bulkCreate()` support
+  * *DEV* Added documentation generation via `npm run docs-gen`
 
 v0.6.1 - d65cbc9 - Dec 7th 2016
   * Fix `Instance` initialization modifying the original passed in object
