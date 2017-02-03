@@ -126,6 +126,17 @@ describe('Model', function () {
 		});
 	});
 	
+	describe('#drop', function () {
+		var mdl;
+		beforeEach(function () {
+			mdl = new Model('foo');
+		});
+		
+		it('should return a promise', function () {
+			mdl.drop().should.be.instanceOf(bluebird);
+		});
+	});
+	
 	describe('#build', function () {
 		var mdl;
 		beforeEach(function () {
@@ -350,6 +361,13 @@ describe('Model', function () {
 				done();
 			}).catch(done);
 		});
+		
+		it('should still find results if there is not options', function (done) {
+			mdl.findAll().then(function (rows) {
+				rows.length.should.equal(1);
+				done();
+			}).catch(done);
+		});
 	});
 	
 	describe('#destroy', function () {
@@ -361,6 +379,15 @@ describe('Model', function () {
 		it('should return a default value of 1 for number of rows destroyed', function (done) {
 			mdl.destroy().then(function (rows) {
 				rows.should.equal(1);
+				done();
+			}).catch(done);
+		});
+		
+		it('should return the limit for number of rows destroyed if that is passed in', function (done) {
+			mdl.destroy({
+				limit: 5
+			}).then(function (rows) {
+				rows.should.equal(5);
 				done();
 			}).catch(done);
 		});

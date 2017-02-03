@@ -80,13 +80,27 @@ describe('Instance', function () {
 	});
 	
 	describe('#set', function () {
-		it('should set the value of a property on the object', function () {
+		it('should set the value of a property on the object given key, value', function () {
 			var inst = new Instance();
 			
 			inst._values.should.not.have.property('foo');
 			inst.set('foo', 'bar');
 			
 			inst._values.should.have.property('foo').which.is.exactly('bar');
+		});
+		
+		it('should set the values of a property on the object given object', function () {
+			var inst = new Instance();
+			
+			inst._values.should.not.have.property('foo');
+			inst._values.should.not.have.property('baz');
+			inst.set({
+				foo: 'bar',
+				baz: 'bin'
+			});
+			
+			inst._values.should.have.property('foo').which.is.exactly('bar');
+			inst._values.should.have.property('baz').which.is.exactly('bin');
 		});
 	});
 	
@@ -120,6 +134,21 @@ describe('Instance', function () {
 				err.errors[0].type.should.equal('mock test type');
 				err.errors[0].path.should.equal('test');
 				err.errors[0].value.should.equal('val');
+				done();
+			}).catch(done);
+		});
+		
+		it('should set default values for validation errors if missing information', function (done) {
+			var inst = new Instance({});
+			inst.$addValidationError();
+			
+			inst.validate().then(function (err) {
+				should.exist(err);
+				err.errors.length.should.equal(1);
+				err.errors[0].message.should.not.equal('');
+				err.errors[0].type.should.not.equal('');
+				should.not.exist(err.errors[0].path);
+				should.not.exist(err.errors[0].value);
 				done();
 			}).catch(done);
 		});

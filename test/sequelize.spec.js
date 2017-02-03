@@ -78,6 +78,50 @@ describe('Sequelize', function () {
 		Sequelize.should.have.property('GEOGRAPHY').which.is.a.Function();
 	});
 	
+	describe('__constructor', function () {
+		it('should default dialect to mock', function () {
+			var seq = new Sequelize();
+			seq.options.dialect.should.equal('mock');
+		});
+		
+		it('should support setting a dialect', function () {
+			var seq = new Sequelize({
+				dialect: 'test',
+			});
+			seq.options.dialect.should.equal('test');
+		});
+		
+		it('should support options as second argument', function () {
+			var seq = new Sequelize('database', {
+				dialect: 'test',
+			});
+			seq.options.dialect.should.equal('test');
+		});
+		
+		it('should support options as third argument', function () {
+			var seq = new Sequelize('database', 'user', {
+				dialect: 'test',
+			});
+			seq.options.dialect.should.equal('test');
+		});
+		
+		it('should support options as fourth argument', function () {
+			var seq = new Sequelize('database', 'user', 'password', {
+				dialect: 'test',
+			});
+			seq.options.dialect.should.equal('test');
+		});
+	});
+	
+	describe('#getDialect', function () {
+		it('should return the dialect set during initialization', function () {
+			var seq = new Sequelize({
+				dialect: 'test'
+			});
+			seq.getDialect().should.equal('test');
+		});
+	});
+	
 	describe('#define', function () {
 		it('should return a Mock Model', function () {
 			var seq = new Sequelize();
