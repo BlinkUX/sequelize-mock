@@ -9,6 +9,7 @@ vNext
   * Add `options` parameter in the `Sequelize` constructor
   * Add `getDialect()` to Sequelize instances which will return the value from the `options` passed into the constructor
   * Add `Sequelize.Instance` which points to the mock Instance class
+  * Change `Model.destroy()` will return the value of `options.limit` if that value exists and is a number
   * *DEV* Added documentation generation via `npm run docs-gen`
 
 v0.6.1 - d65cbc9 - Dec 7th 2016
