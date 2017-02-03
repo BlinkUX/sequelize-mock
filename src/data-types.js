@@ -16,6 +16,8 @@
  * @fileOverview Mock class for the base Sequelize class
  */
 
+function noop() {}
+
 module.exports = function (Sequelize) {
 	/**
 	 * Mock data type. Simply a no-op function for use in definitions

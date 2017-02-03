@@ -83,7 +83,6 @@ fakeModel.prototype.drop = function () {
 fakeModel.prototype.getTableName = function () {
 	return this.name;
 };
-};
 
 /**
  * No-op that returns the current object

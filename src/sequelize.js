@@ -14,8 +14,6 @@ var _ = require('lodash'),
 	Utils = require('./utils'),
 	Errors = require('./errors');
 
-function noop() {}
-
 /**
  * Sequelize Mock Object. This can be initialize much the same way that Sequelize itself
  * is initialized. Any configuration or options is ignored, so it can be used as a drop-in
