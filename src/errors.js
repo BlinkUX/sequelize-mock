@@ -27,6 +27,7 @@ var _ = require('lodash');
 exports.BaseError = function() {
 	// Set basic error info
 	var err = Error.apply(this, arguments);
+	/* istanbul ignore next */
 	if (Error.captureStackTrace)
 		Error.captureStackTrace(this, this.constructor);
 	
