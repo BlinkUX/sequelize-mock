@@ -6,6 +6,9 @@ vNext
   * Add `Instance.get()` no parameter support to get a cloned Object of all of the values
   * Add `Instance.destroy()` will now set a `deletedAt` property to the current date
   * Add `Sequelize.Utils._` which points to the lodash library
+  * Add `options` parameter in the `Sequelize` constructor
+  * Add `getDialect()` to Sequelize instances which will return the value from the `options` passed into the constructor
+  * Add `Sequelize.Instance` which points to the mock Instance class
   * *DEV* Added documentation generation via `npm run docs-gen`
 
 v0.6.1 - d65cbc9 - Dec 7th 2016
