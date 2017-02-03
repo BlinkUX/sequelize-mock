@@ -306,6 +306,31 @@ describe('Model', function () {
 		});
 	});
 	
+	describe('#bulkCreate', function () {
+		var mdl;
+		beforeEach(function () {
+			mdl = new Model('foo');
+		});
+		
+		it('should create each model in the passed array', function (done) {
+			var vals = [
+				{
+					'baz' : 'bin'
+				},
+				{
+					'qux' : 'quuz'
+				},
+			];
+			
+			mdl.bulkCreate(vals).then(function (arr) {
+				arr.should.be.an.Array();
+				arr[0]._args[1].should.equal(vals[0]);
+				arr[1]._args[1].should.equal(vals[1]);
+				done();
+			}).catch(done);
+		});
+	});
+	
 	describe('#findAll', function () {
 		var mdl;
 		beforeEach(function () {

@@ -72,6 +72,9 @@ fakeModel.prototype.upsert = function () {
 fakeModel.prototype.findOrCreate = function (obj) {
 	return Promise.resolve( [this.generateTestModel(obj.where), !!this._wasCreated] );
 };
+fakeModel.prototype.bulkCreate = function (set, options) {
+	return Promise.all( _.map(set, this.create.bind(this)) );
+};
 //
 fakeModel.prototype.findAll =  function (obj) {
 	return this.generateModelsPromises(obj ? obj.where : {});
