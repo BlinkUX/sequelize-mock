@@ -206,11 +206,11 @@ describe('Sequelize', function () {
 	});
 	
 	describe('#query', function () {
-		it('should pass query along to QueryInterface', function (done) {
+		it('should pass query along to QueryInterface', function () {
 			var seq = new Sequelize(),
 				run = 0;
 			seq.queryInterface = {
-				query: function () {
+				$query: function () {
 					run++;
 					return 'foo';
 				},
