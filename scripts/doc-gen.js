@@ -154,7 +154,23 @@ DocComment.prototype.render = function () {
 		
 		if(text.startsWith('{@link')) {
 			text = text.slice(0, text.length - 1).replace(/\{@link\s*/, '');
-			return '[' + prefix + text + suffix + '](#' + text.replace(/[^0-9a-zA-Z]/g, '') + ')';
+			var link = text,
+				indexTextSplit = text.indexOf('|');
+			
+			if(indexTextSplit > 0) {
+				link = text.slice(0, indexTextSplit);
+				// Remove the space or pipe
+				text = text.slice(indexTextSplit + 1);
+			} else {
+				link = link.replace(/[^0-9a-zA-Z]/g, '');
+				text = text.replace(/]/g, '');
+			}
+			
+			if(!(link.startsWith('./') || link.startsWith('#') || link.match(/^https?:\/\//i))) {
+				link = '#' + link;
+			}
+			
+			return '[' + prefix + text + suffix + '](' + link + ')';
 		}
 		return prefix + text + suffix;
 	}
