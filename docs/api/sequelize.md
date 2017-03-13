@@ -105,7 +105,7 @@ result | Any | The object or value to be returned as the result of a query
 
 
 ###  Return
-Returns <Sequelize> self
+`Sequelize`: self
 
 
 
@@ -130,7 +130,7 @@ error | Any | The object or value to be returned as the failure for a query
 
 
 ###  Return
-Returns <Sequelize> self
+`Sequelize`: self
 
 
 
@@ -145,7 +145,7 @@ Clears any queued results from `$queueResult` or `$queueFailure` <br>**Alias** $
  - [$queueFailure](#queueFailure)
 
 ###  Return
-Returns <Sequelize> self
+`Sequelize`: self
 
 
 
@@ -155,7 +155,7 @@ Returns <Sequelize> self
 Returns the specified dialect
 
 ###  Return
-Returns <String> The specified dialect
+`String`: The specified dialect
 
 
 
@@ -170,7 +170,7 @@ Returns the current instance of `QueryInterface`
  - [query](#query)
 
 ###  Return
-Returns <QueryInterface> The instantiated `QueryInterface` object used for test `query`
+`QueryInterface`: The instantiated `QueryInterface` object used for test `query`
 
 
 
@@ -215,7 +215,7 @@ name | String | Name of the mock Model
 
 
 ###  Return
-Returns <Model> Mock Model as defined by the name, default values, and options provided
+`Model`: Mock Model as defined by the name, default values, and options provided
 
 
 
@@ -225,7 +225,7 @@ Returns <Model> Mock Model as defined by the name, default values, and options p
 Run a mock query against the `QueryInterface` associated with this Sequelize instance
 
 ###  Return
-Returns <Promise.&#60;Any&#62;> The next result of a query as queued to the `QueryInterface`
+`Promise.<Any>`: The next result of a query as queued to the `QueryInterface`
 
 
 
@@ -244,7 +244,7 @@ Name | Type | Description
 
 
 ###  Return
-Returns <Promise> Promise that resolves the code is successfully run, otherwise it is rejected
+`Promise`: Promise that resolves the code is successfully run, otherwise it is rejected
 
 
 
@@ -261,5 +261,5 @@ arg | Any | Value to return
 
 
 ###  Return
-Returns <Any> value passed in
+`Any`: value passed in
 

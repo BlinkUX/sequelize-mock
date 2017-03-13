@@ -64,7 +64,7 @@ path | String | Field you would like the list of validation errors for
 
 
 ####  Return
-Returns <Array.&#60;ValidationErrorItem&#62;> Array of validation errors for the given field
+`Array.<ValidationErrorItem>`: Array of validation errors for the given field
 
 
 

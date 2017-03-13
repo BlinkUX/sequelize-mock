@@ -92,7 +92,7 @@ col | String | Field to add validation error for
 
 
 ###  Return
-Returns <Instance> Instance object for chainability
+`Instance`: Instance object for chainability
 
 
 
@@ -109,7 +109,7 @@ col | String | Field to remove validation errors for
 
 
 ###  Return
-Returns <Instance> The object for chainability
+`Instance`: The object for chainability
 
 
 
@@ -133,7 +133,7 @@ afterEach(function () {
 ```
 
 ###  Return
-Returns <Instance> The object for chainability
+`Instance`: The object for chainability
 
 
 
@@ -152,7 +152,7 @@ key | String, Object | Key to set the value for. If `key` is an Object, each key
 
 
 ###  Return
-Returns <Instance> The object for chainability
+`Instance`: The object for chainability
 
 
 
@@ -171,7 +171,7 @@ Name | Type | Description
 
 
 ###  Return
-Returns <Any, Object> either the value of the key, or all the values if there is no key
+`Any, Object`: either the value of the key, or all the values if there is no key
 
 
 
@@ -184,7 +184,7 @@ be returned and the queue of validation errors will be cleared.
 As with Sequelize, this will **resolve** any validation errors, not throw the errors.
 
 ###  Return
-Returns <Promise.&#60;ValidationErrorItem|undefined&#62;> will resolve with any errors, or with nothing if there were no errors queued.
+`Promise.<ValidationErrorItem|undefined>`: will resolve with any errors, or with nothing if there were no errors queued.
 
 
 
@@ -195,7 +195,7 @@ Because there is no database that it saves to, this will mainly trigger validati
 the Instance and reject the promise if there are any validation errors.
 
 ###  Return
-Returns <Promise.&#60;Instance&#62;> Instance if there are no validation errors, otherwise it will reject the promise with those errors
+`Promise.<Instance>`: Instance if there are no validation errors, otherwise it will reject the promise with those errors
 
 
 
@@ -205,7 +205,7 @@ Returns <Promise.&#60;Instance&#62;> Instance if there are no validation errors,
 This simply sets the `deletedAt` value and has no other effect on the mock Instance
 
 ###  Return
-Returns <Promise> will always resolve as a successful destroy
+`Promise`: will always resolve as a successful destroy
 
 
 
@@ -215,7 +215,7 @@ Returns <Promise> will always resolve as a successful destroy
 This has no effect on the Instance
 
 ###  Return
-Returns <Promise.&#60;Instance&#62;> will always resolve with the current instance
+`Promise.<Instance>`: will always resolve with the current instance
 
 
 
@@ -231,7 +231,7 @@ and pass any errors along
  - [save](#save)
 
 ###  Return
-Returns <Promise.&#60;Instance&#62;> Promise from the save function
+`Promise.<Instance>`: Promise from the save function
 
 
 
@@ -241,5 +241,5 @@ Returns <Promise.&#60;Instance&#62;> Promise from the save function
 Returns all the values in a JSON representation. <br>**Alias** toJson
 
 ###  Return
-Returns <Object> all the values on the object
+`Object`: all the values on the object
 

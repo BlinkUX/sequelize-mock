@@ -53,7 +53,7 @@ result | Any | The object or value to be returned as the result of a query
 
 
 ###  Return
-Returns <QueryInterface> self
+`QueryInterface`: self
 
 
 
@@ -74,7 +74,7 @@ error | Any | The object or value to be returned as the failure for a query
 
 
 ###  Return
-Returns <QueryInterface> self
+`QueryInterface`: self
 
 
 
@@ -92,7 +92,7 @@ Name | Type | Description
 
 
 ###  Return
-Returns <QueryInterface> self
+`QueryInterface`: self
 
 
 
@@ -114,5 +114,5 @@ Name | Type | Description
 
 
 ###  Return
-Returns <Promise> resolved or rejected promise from the next item in the review queue
+`Promise`: resolved or rejected promise from the next item in the review queue
 

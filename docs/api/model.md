@@ -45,7 +45,7 @@ An empty object with the proper prototype for what functions an Instance gets
 No-op that returns a promise with the current object
 
 ###  Return
-Returns <Promise.&#60;Model&#62;> Self
+`Promise.<Model>`: Self
 
 
 
@@ -55,7 +55,7 @@ Returns <Promise.&#60;Model&#62;> Self
 No-op that returns a promise that always resolves
 
 ###  Return
-Returns <Promise> Promise that always resolves
+`Promise`: Promise that always resolves
 
 
 
@@ -65,7 +65,7 @@ Returns <Promise> Promise that always resolves
 Returns the name of the model
 
 ###  Return
-Returns <String> the name of the model
+`String`: the name of the model
 
 
 
@@ -75,7 +75,7 @@ Returns <String> the name of the model
 No-op that returns the current object
 
 ###  Return
-Returns <Model> Self
+`Model`: Self
 
 
 
@@ -85,7 +85,7 @@ Returns <Model> Self
 No-op that returns the current object
 
 ###  Return
-Returns <Model> Self
+`Model`: Self
 
 
 
@@ -116,7 +116,7 @@ Name | Type | Description
 
 
 ###  Return
-Returns <Promise.&#60;Array.&#60;Instance&#62;&#62;> Promise that resolves with an array of length 1
+`Promise.<Array.<Instance>>`: Promise that resolves with an array of length 1
 
 
 
@@ -137,7 +137,7 @@ id | Integer | ID of the instance
 
 
 ###  Return
-Returns <Promise.&#60;Instance&#62;> Promise that resolves with an instance with the given ID
+`Promise.<Instance>`: Promise that resolves with an instance with the given ID
 
 
 
@@ -171,7 +171,7 @@ Name | Type | Description
 
 
 ###  Return
-Returns <Promise.&#60;Instance&#62;> Promise that resolves with an instance with the given properties
+`Promise.<Instance>`: Promise that resolves with an instance with the given properties
 
 
 
@@ -188,7 +188,7 @@ field | String | Name of the field to return for
 
 
 ###  Return
-Returns <Any> the default value for the given field
+`Any`: the default value for the given field
 
 
 
@@ -205,7 +205,7 @@ field | String | Name of the field to return for
 
 
 ###  Return
-Returns <Any> the default value for the given field
+`Any`: the default value for the given field
 
 
 
@@ -222,7 +222,7 @@ field | String | Name of the field to return for
 
 
 ###  Return
-Returns <Any> the default value for the given field
+`Any`: the default value for the given field
 
 
 
@@ -239,7 +239,7 @@ Name | Type | Description
 
 
 ###  Return
-Returns <Instance> a new instance with any given properties
+`Instance`: a new instance with any given properties
 
 
 
@@ -261,7 +261,7 @@ options | Object | Map of values that the instance should have
 
 
 ###  Return
-Returns <Promise.&#60;Instance&#62;> a promise that resolves after saving a new instance with the given properties
+`Promise.<Instance>`: a promise that resolves after saving a new instance with the given properties
 
 
 
@@ -285,7 +285,7 @@ options.where | Object | Map of values that the instance should have
 
 
 ###  Return
-Returns <Promise.&#60;Array.&#60;Instance, Boolean&#62;&#62;> Promise that includes the instance and whether or not it was created
+`Promise.<Array.<Instance, Boolean>>`: Promise that includes the instance and whether or not it was created
 
 
 
@@ -302,7 +302,7 @@ values | Object | Values of the Instance being created
 
 
 ###  Return
-Returns <Promise.&#60;Boolean&#62;> Promise that resolves with a boolean meant to indicate if something was inserted
+`Promise.<Boolean>`: Promise that resolves with a boolean meant to indicate if something was inserted
 
 
 
@@ -323,7 +323,7 @@ set | Array.&#60;Object&#62; | Set of values to create objects for
 
 
 ###  Return
-Returns <Promise.&#60;Array.&#60;Instance&#62;&#62;> Promise that contains all created Instances
+`Promise.<Array.<Instance>>`: Promise that contains all created Instances
 
 
 
@@ -342,7 +342,7 @@ Name | Type | Description
 
 
 ###  Return
-Returns <Promise.&#60;Integer&#62;> Promise with number of deleted rows
+`Promise.<Integer>`: Promise with number of deleted rows
 
 
 
@@ -361,5 +361,5 @@ values | Object | Values to build the Instance
 
 
 ###  Return
-Returns <Promise.&#60;Array.&#60;Integer, Array.&#60;Instance&#62;&#62;&#62;> Promise with an array of the number of affected rows and the affected rows themselves
+`Promise.<Array.<Integer, Array.<Instance>>>`: Promise with an array of the number of affected rows and the affected rows themselves
 

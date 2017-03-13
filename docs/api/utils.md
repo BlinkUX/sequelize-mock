@@ -17,7 +17,7 @@ str | String | String to uppercase the first character of
 
 
 ###  Return
-Returns <String> modified string
+`String`: modified string
 
 
 
@@ -34,7 +34,7 @@ str | String | String to uppercase the first character of
 
 
 ###  Return
-Returns <String> modified string
+`String`: modified string
 
 
 
@@ -52,7 +52,7 @@ str | String | Word to convert to its singular form
 
 
 ###  Return
-Returns <String> singular version of the given word
+`String`: singular version of the given word
 
 
 
@@ -70,7 +70,7 @@ str | String | Word to convert to its plural form
 
 
 ###  Return
-Returns <String> plural version of the given word
+`String`: plural version of the given word
 
 
 

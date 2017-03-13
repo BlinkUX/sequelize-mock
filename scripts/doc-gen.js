@@ -262,7 +262,7 @@ DocComment.prototype.render = function () {
 		if( retType ) {
 			output += '\n\n';
 			output += secondLevelHeader + ' Return\n';
-			output += 'Returns <' + DocComment.printableTypeList(retType) + '> ' + retType.description;
+			output += '`' + retType.types.join(', ').replace(/`/g, "'") + '`: ' + retType.description;
 		}
 	}
 	
