@@ -115,6 +115,73 @@ describe('Sequelize', function () {
 		});
 	});
 	
+	describe('#$queueResult', function () {
+		var seq;
+		beforeEach(function () {
+			seq = new Sequelize();
+		});
+		
+		it('should queue a result against the QueryInterface', function () {
+			var queue = [];
+			seq.queryInterface = {
+				$queueResult: function (res) {
+					queue.push(res);
+				}
+			};
+			seq.$queueResult('foo');
+			queue.length.should.equal(1);
+			queue[0].should.equal('foo');
+		});
+	});
+	
+	describe('#$queueFailure', function () {
+		var seq;
+		beforeEach(function () {
+			seq = new Sequelize();
+		});
+		
+		it('should queue a result against the QueryInterface', function () {
+			var queue = [];
+			seq.queryInterface = {
+				$queueFailure: function (res) {
+					queue.push(res);
+				}
+			};
+			seq.$queueFailure('foo');
+			queue.length.should.equal(1);
+			queue[0].should.equal('foo');
+		});
+		
+		it('should pass along options to the QueryInterface', function () {
+			var options;
+			seq.queryInterface = {
+				$queueFailure: function (res, opts) {
+					options = opts;
+				}
+			};
+			seq.$queueFailure('foo', 'bar');
+			options.should.equal('bar');
+		});
+	});
+	
+	describe('#$clearQueue', function () {
+		var seq;
+		beforeEach(function () {
+			seq = new Sequelize();
+		});
+		
+		it('should queue a result against the QueryInterface', function () {
+			var run = 0;
+			seq.queryInterface = {
+				$clearQueue: function (res) {
+					run++;
+				}
+			};
+			seq.$clearQueue();
+			run.should.equal(1);
+		});
+	});
+	
 	describe('#getDialect', function () {
 		it('should return the dialect set during initialization', function () {
 			var seq = new Sequelize({
@@ -139,14 +206,18 @@ describe('Sequelize', function () {
 	});
 	
 	describe('#query', function () {
-		it('should throw an error when calling query', function (done) {
-			var seq = new Sequelize();
-			seq.query().then(function () {
-				done(new Error('Error not thrown '));
-			}, function (err) {
-				err.message.indexOf('requires test specific configuration').should.be.above(-1);
-				done();
-			}).catch(done);
+		it('should pass query along to QueryInterface', function (done) {
+			var seq = new Sequelize(),
+				run = 0;
+			seq.queryInterface = {
+				query: function () {
+					run++;
+					return 'foo';
+				},
+			};
+			
+			seq.query().should.equal('foo');
+			run.should.equal(1);
 		});
 	});
 	

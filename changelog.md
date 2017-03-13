@@ -1,8 +1,11 @@
 # Changelog
 
 vNext
-  * Add `Sequelize.getQueryInterface()` support
+  * Add `$queueResult()`, `$queueFailure()`, and `$clearQueue` test methods to Sequelize instances
   * Add `QueryInterface` object to support test result mocking
+  * Add `getQueryInterface()` to Sequelize instances which will get the associated `QueryInterface` object
+  * BREAKING The `query()` method for Sequelize instances will now throw instead of returning a rejected `Promise` by default. See the `$queueResult` or `$queueFailure` methods
+  * *DEV* Added HTML code coverage report to default `npm test` run
 
 v0.7.0 - bcfb924 - Feb 3rd 2017
   * Add `Model.bulkCreate()` support

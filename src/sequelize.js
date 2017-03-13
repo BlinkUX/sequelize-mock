@@ -148,6 +148,72 @@ _.each(Errors, function (fn, name) {
 // DATA TYPES
 require('./data-types')(Sequelize);
 
+/* Test Specific Functionality
+ * 
+ */
+/**
+ * Queue a new query result to be returned by either the `query` method call or as a
+ * fallback from queries from `Model`s defined through the `define` method.
+ * 
+ * @see {@link query}
+ * @alias $queueQueryResult
+ * @alias $qqr
+ * @param {Any} result The object or value to be returned as the result of a query
+ * @return {Sequelize} self
+ **/
+Sequelize.prototype.$queueResult = function(result) {
+	this.queryInterface.$queueResult(result);
+	return this;
+};
+Sequelize.prototype.$queueQueryResult = Sequelize.prototype.$qqr = Sequelize.prototype.$queueResult;
+
+/**
+ * Queue a new query result to be returned by either the `query` method call or as a
+ * fallback from queries from `Model`s defined through the `define` method. This result
+ * is returned as a rejected promise for testing error handling.
+ * 
+ * @see {@link query}
+ * @alias $queueQueryFailure
+ * @alias $queueError
+ * @alias $queueQueryError
+ * @alias $qqf
+ * @param {Any} error The object or value to be returned as the failure for a query
+ * @param {Object} [options]
+ * @param {Boolean} [options.convertNonErrors] Flag indicating if non `Error` objects should be allowed. Defaults to true
+ * @return {Sequelize} self
+ **/
+Sequelize.prototype.$queueFailure = function(error, options) {
+	this.queryInterface.$queueFailure(error, options);
+	return this;
+};
+Sequelize.prototype.$queueError =
+Sequelize.prototype.$queueQueryError =
+Sequelize.prototype.$queueQueryFailure =
+Sequelize.prototype.$qqf = Sequelize.prototype.$queueFailure;
+
+/**
+ * Clears any queued results from `$queueResult` or `$queueFailure`
+ * 
+ * @see {@link $queueResult}
+ * @see {@link $queueFailure}
+ * @alias $queueClear
+ * @alias $queueQueryClear
+ * @alias $cqq
+ * @alias $qqc
+ * @return {Sequelize} self
+ **/
+Sequelize.prototype.$clearQueue = function() {
+	this.queryInterface.$clearQueue();
+	return this;
+};
+Sequelize.prototype.$queueClear =
+Sequelize.prototype.$queueQueryClear =
+Sequelize.prototype.$cqq =
+Sequelize.prototype.$qqc = Sequelize.prototype.$clearQueue;
+
+/* Mock Functionality
+ * 
+ */
 /**
  * Returns the specified dialect
  * 
@@ -203,13 +269,12 @@ Sequelize.prototype.define = function (name, obj, opts) {
 };
 
 /**
- * This function will always return a rejected Promise. This method should be overriden
- * as needed in your tests to return the proper data from your raw queries.
+ * Run a mock query against the `QueryInterface` associated with this Sequelize instance
  * 
- * @return {Promise} A rejected promise with an error detailing that mock queries are too broad to stub in a meaningful way
+ * @return {Promise<Any>} The next result of a query as queued to the `QueryInterface`
  */
 Sequelize.prototype.query = function () {
-	return bluebird.reject(new Error('This function requires test specific configuration as it is too broad to generalize'));
+	return this.queryInterface.$query();
 };
 
 /**

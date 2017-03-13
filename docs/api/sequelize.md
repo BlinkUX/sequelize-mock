@@ -87,6 +87,68 @@ Reference to the mock Instance class
 
 
 
+<a name="queueResult"></a>
+## $queueResult(result) -> Sequelize
+
+Queue a new query result to be returned by either the `query` method call or as a
+fallback from queries from `Model`s defined through the `define` method. <br>**Alias** $queueQueryResult, $qqr
+
+**See**
+
+ - [query](#query)
+
+###  Parameters
+
+Name | Type | Description
+--- | --- | ---
+result | Any | The object or value to be returned as the result of a query
+
+
+###  Return
+Returns <Sequelize> self
+
+
+
+<a name="queueFailure"></a>
+## $queueFailure(error, [options]) -> Sequelize
+
+Queue a new query result to be returned by either the `query` method call or as a
+fallback from queries from `Model`s defined through the `define` method. This result
+is returned as a rejected promise for testing error handling. <br>**Alias** $queueQueryFailure, $queueError, $queueQueryError, $qqf
+
+**See**
+
+ - [query](#query)
+
+###  Parameters
+
+Name | Type | Description
+--- | --- | ---
+error | Any | The object or value to be returned as the failure for a query
+[options] | Object | 
+[options.convertNonErrors] | Boolean | Flag indicating if non `Error` objects should be allowed. Defaults to true
+
+
+###  Return
+Returns <Sequelize> self
+
+
+
+<a name="clearQueue"></a>
+## $clearQueue() -> Sequelize
+
+Clears any queued results from `$queueResult` or `$queueFailure` <br>**Alias** $queueClear, $queueQueryClear, $cqq, $qqc
+
+**See**
+
+ - [$queueResult](#queueResult)
+ - [$queueFailure](#queueFailure)
+
+###  Return
+Returns <Sequelize> self
+
+
+
 <a name="getDialect"></a>
 ## getDialect() -> String
 
@@ -158,13 +220,12 @@ Returns <Model> Mock Model as defined by the name, default values, and options p
 
 
 <a name="query"></a>
-## query() -> Promise
+## query() -> Promise.&#60;Any&#62;
 
-This function will always return a rejected Promise. This method should be overriden
-as needed in your tests to return the proper data from your raw queries.
+Run a mock query against the `QueryInterface` associated with this Sequelize instance
 
 ###  Return
-Returns <Promise> A rejected promise with an error detailing that mock queries are too broad to stub in a meaningful way
+Returns <Promise.&#60;Any&#62;> The next result of a query as queued to the `QueryInterface`
 
 
 
