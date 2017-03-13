@@ -1,5 +1,9 @@
 # Changelog
 
+vNext
+  * Add `Sequelize.getQueryInterface()` support
+  * Add `QueryInterface` object to support test result mocking
+
 v0.7.0 - bcfb924 - Feb 3rd 2017
   * Add `Model.bulkCreate()` support
   * Add `Instance.set()` Object parameter support

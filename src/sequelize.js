@@ -12,7 +12,8 @@ var _ = require('lodash'),
 	Model = require('./model'),
 	Instance = require('./instance'),
 	Utils = require('./utils'),
-	Errors = require('./errors');
+	Errors = require('./errors'),
+	QueryInterface = require('./queryinterface');
 
 /**
  * Sequelize Mock Object. This can be initialize much the same way that Sequelize itself
@@ -35,6 +36,8 @@ function Sequelize(database, username, password, options) {
 	} else if (typeof password == 'object') {
 		options = password;
 	}
+	
+	this.queryInterface = new QueryInterface();
 	
 	/**
 	 * Options passed into the Sequelize initialization
@@ -152,6 +155,17 @@ require('./data-types')(Sequelize);
  */
 Sequelize.prototype.getDialect = function() {
 	return this.options.dialect;
+};
+
+/**
+ * Returns the current instance of `QueryInterface`
+ * 
+ * @see {@link ./queryinterface.md|QueryInterface}
+ * @see {@link query}
+ * @return {QueryInterface} The instantiated `QueryInterface` object used for test `query`
+ */
+Sequelize.prototype.getQueryInterface = function() {
+	return this.queryInterface;
 };
 
 /**

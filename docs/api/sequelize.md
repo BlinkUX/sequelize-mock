@@ -97,6 +97,21 @@ Returns <String> The specified dialect
 
 
 
+<a name="getQueryInterface"></a>
+## getQueryInterface() -> QueryInterface
+
+Returns the current instance of `QueryInterface`
+
+**See**
+
+ - [QueryInterface](./queryinterface.md)
+ - [query](#query)
+
+###  Return
+Returns <QueryInterface> The instantiated `QueryInterface` object used for test `query`
+
+
+
 <a name="define"></a>
 ## define(name, [obj={}], [opts]) -> Model
 

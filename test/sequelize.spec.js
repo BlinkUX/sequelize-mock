@@ -13,11 +13,13 @@ var ErrorMock = {
 	'BaseError': function () { return 'base error'; },
 	'OtherError': function () { return 'base error'; },
 };
+var QueryInterfaceMock = function () {};
 
 var Sequelize = proxyquire('../src/sequelize', {
 	'./model'  : ModelMock,
 	'./utils'  : UtilsMock,
 	'./errors' : ErrorMock,
+	'./queryinterface' : QueryInterfaceMock,
 	'../package.json' : PackageMock
 });
 
@@ -119,6 +121,13 @@ describe('Sequelize', function () {
 				dialect: 'test'
 			});
 			seq.getDialect().should.equal('test');
+		});
+	});
+	
+	describe('#getQueryInterface', function () {
+		it('should return the QueryInterface object', function () {
+			var seq = new Sequelize();
+			seq.getQueryInterface().should.be.instanceof(QueryInterfaceMock);
 		});
 	});
 	
