@@ -273,7 +273,7 @@ parentError | Error | Original error that triggered this error
 
 
 <a name="InstanceError"></a>
-## InstanceError(message)
+## new InstanceError(message)
 
 Error from a Sequelize (Mock) Instance <br>**Extends** [BaseError](#BaseError)
 
