@@ -461,4 +461,52 @@ describe('Errors', function () {
 		
 	});
 	
+	describe('InvalidQueryResultError', function () {
+		
+		it('should set message', function () {
+			var err = new Errors.InvalidQueryResultError('Test Message');
+			err.message.should.equal('Test Message');
+		});
+		
+		it('should set a default message when none is provided', function () {
+			var err = new Errors.InvalidQueryResultError();
+			err.message.should.not.be.empty();
+		});
+		
+		it('should have a Sequelize Mock specific name', function () {
+			var err = new Errors.InvalidQueryResultError();
+			err.name.should.equal('SequelizeMockInvalidQueryResultError');
+		});
+		
+		it('should inherit from the BaseError object', function () {
+			var err = new Errors.InvalidQueryResultError();
+			err.should.be.instanceOf(Errors.BaseError);
+		});
+		
+	});
+	
+	describe('EmptyQueryQueueError', function () {
+		
+		it('should set message', function () {
+			var err = new Errors.EmptyQueryQueueError('Test Message');
+			err.message.should.equal('Test Message');
+		});
+		
+		it('should set a default message when none is provided', function () {
+			var err = new Errors.EmptyQueryQueueError();
+			err.message.should.not.be.empty();
+		});
+		
+		it('should have a Sequelize Mock specific name', function () {
+			var err = new Errors.EmptyQueryQueueError();
+			err.name.should.equal('SequelizeMockEmptyQueryQueueError');
+		});
+		
+		it('should inherit from the BaseError object', function () {
+			var err = new Errors.EmptyQueryQueueError();
+			err.should.be.instanceOf(Errors.BaseError);
+		});
+		
+	});
+	
 });

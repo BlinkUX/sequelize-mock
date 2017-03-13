@@ -356,3 +356,36 @@ exports.InstanceError = function (message) {
 };
 // Extend BaseError
 util.inherits(exports.InstanceError , exports.BaseError);
+
+/**
+ * InvalidQueryError indicates that a query object was not formatted correctly. This most
+ * likely means that you attempted to add a new query by pushing directly to the internal
+ * object rather than going through `$queueResult` or `$queueFailure`.
+ * 
+ * @class InvalidQueryError
+ * @constructor
+ * @extends BaseError
+ * @private
+ */
+exports.InvalidQueryResultError = function (message) {
+	exports.BaseError.call(this, message || 'Invalid query result was queued. Unable to complete mock query');
+	this.name = 'SequelizeMockInvalidQueryResultError';
+};
+// Extend ConnectionError
+util.inherits(exports.InvalidQueryResultError , exports.BaseError);
+
+/**
+ * EmptyQueryQueueError indicates that there are currently no queued results and that no
+ * automated fallback was provided or available for the calling function.
+ * 
+ * @class EmptyQueryQueueError
+ * @constructor
+ * @extends BaseError
+ * @private
+ */
+exports.EmptyQueryQueueError = function (message) {
+	exports.BaseError.call(this, message || 'No query results are queued. Unexpected query attempted to be run');
+	this.name = 'SequelizeMockEmptyQueryQueueError';
+};
+// Extend ConnectionError
+util.inherits(exports.EmptyQueryQueueError , exports.BaseError);
