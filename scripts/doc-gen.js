@@ -12,8 +12,9 @@ var DOCUMENTATION_ORDER = {
 	'Model': 2,
 	'Instance': 3,
 	'DataTypes': 4,
-	'Errors': 5,
-	'Utils': 6,
+	'QueryInterface': 5,
+	'Errors': 6,
+	'Utils': 7,
 };
 
 /**	DocFile

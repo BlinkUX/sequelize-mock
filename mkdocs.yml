@@ -21,6 +21,7 @@ pages:
   - 'Model': 'api/model.md'
   - 'Instance': 'api/instance.md'
   - 'DataTypes': 'api/data-types.md'
+  - 'QueryInterface': 'api/queryinterface.md'
   - 'Errors': 'api/errors.md'
   - 'Utils': 'api/utils.md'
 ### API PAGES END
