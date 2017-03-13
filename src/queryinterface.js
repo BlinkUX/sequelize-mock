@@ -30,6 +30,7 @@ var bluebird = require('bluebird'),
  * the class are exposed on objects utilize this class.
  * 
  * @class QueryInterface
+ * @constructor
  * @param {Object} [options] Options for the query interface to use
  * @param {QueryInterface} [options.parent] Parent `QueryInterface` object to propagate up to
  * @param {Boolean} [options.stopPropagation] Flag indicating if we should not propagate to the parent
@@ -45,11 +46,11 @@ function QueryInterface (options) {
  * Queue a new success result from the mock database
  * 
  * @instance
- * @param {Any} [result] The object or value to be returned as the result of a query
+ * @param {Any} result The object or value to be returned as the result of a query
  * @param {Object} [options] Options used when returning the result
  * @param {Boolean} [options.wasCreated] Optional flag if a query requires a `created` value in the return indicating if the object was "created" in the DB
  * @param {Array<Any>} [options.affectedRows] Optional array of objects if the query requires an `affectedRows` return value
- * @return {QueryInterface} this
+ * @return {QueryInterface} self
  **/
 QueryInterface.prototype.$queueResult = function (result, options) {
 	this._results.push({
@@ -67,11 +68,11 @@ QueryInterface.prototype.$queueResult = function (result, options) {
  * `BaseError` object unless specified by the `options.convertNonErrors` parameter.
  * 
  * @instance
- * @name $queueFailure
- * @param {Any} [error] The object or value to be returned as the failure for a query
+ * @alias $queueError
+ * @param {Any} error The object or value to be returned as the failure for a query
  * @param {Object} [options] Options used when returning the result
  * @param {Boolean} [options.convertNonErrors] Flag indicating if non `Error` objects should be allowed. Defaults to true
- * @return {QueryInterface} this
+ * @return {QueryInterface} self
  **/
 QueryInterface.prototype.$queueFailure = function (error, options) {
 	// Rejections from Sequelize will almost always be errors, so we convert to an error by default
@@ -94,9 +95,10 @@ QueryInterface.prototype.$queueError = QueryInterface.prototype.$queueFailure;
  * Clears any queued query results
  * 
  * @instance
+ * @alias $queueClear
  * @param {Object} [options] Options used when returning the result
  * @param {Boolean} [options.propagateClear] Propagate this clear up to any parent `QueryInterface`s. Defaults to false
- * @return {QueryInterface} this
+ * @return {QueryInterface} self
  **/
 QueryInterface.prototype.$clearQueue = function (options) {
 	options = options || {};
@@ -122,7 +124,7 @@ QueryInterface.prototype.$queueClear = QueryInterface.prototype.$clearQueue;
  * @param {Boolean} [options.includeCreated] Flag indicating if a `created` value should be returned with the result for this query. Defaults to false
  * @param {Boolean} [options.includeAffectedRows] Flag indicating if the query expects `affectedRows` in the returned result parameters. Defautls to false
  * @param {Boolean} [options.stopPropagation] Flag indicating if result queue propagation should be stopped on this query. Defaults to false
- * @return {Promise}
+ * @return {Promise} resolved or rejected promise from the next item in the review queue
  **/
 QueryInterface.prototype.$query = function (options) {
 	options = options || {};
