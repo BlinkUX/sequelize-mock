@@ -73,7 +73,7 @@ QueryInterface.prototype.$queueResult = function (result, options) {
  * @param {Boolean} [options.convertNonErrors] Flag indicating if non `Error` objects should be allowed. Defaults to true
  * @return {QueryInterface} this
  **/
-QueryInterface.prototype.$queueError = QueryInterface.prototype.$queueFailure = function (error, options) {
+QueryInterface.prototype.$queueFailure = function (error, options) {
 	// Rejections from Sequelize will almost always be errors, so we convert to an error by default
 	if((!options || options.convertNonErrors !== false) && !(error instanceof Error)) {
 		// Convert non-Error objects to BaseError objects if we haven't specified otherwise
@@ -88,6 +88,7 @@ QueryInterface.prototype.$queueError = QueryInterface.prototype.$queueFailure = 
 	
 	return this;
 };
+QueryInterface.prototype.$queueError = QueryInterface.prototype.$queueFailure;
 
 /**
  * Clears any queued query results
@@ -109,6 +110,7 @@ QueryInterface.prototype.$clearQueue = function (options) {
 	
 	return this;
 };
+QueryInterface.prototype.$queueClear = QueryInterface.prototype.$clearQueue;
 
 /**
  * This is the mock method for getting results from the `QueryInterface`. This function
