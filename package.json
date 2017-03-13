@@ -5,7 +5,8 @@
   "main": "src/index.js",
   "scripts": {
     "doc-gen": "node scripts/doc-gen.js",
-    "test": "nyc mocha",
+    "test": "nyc --reporter=text --reporter=html mocha",
+    "test-report": "nyc report --reporter=html",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "preversion": "npm test",
     "version": "node scripts/version.js && git add changelog.md"
