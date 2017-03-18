@@ -38,7 +38,11 @@ var bluebird = require('bluebird'),
  * @param {Function} [options.fallbackFn] Default function to call as a fallback if nothing is left in the queue and a fallback function is not passed in with the query
  **/
 function QueryInterface (options) {
-	this.options = options || {};
+	this.options = _.extend({
+		stopPropagation: false,
+		createdDefault: true,
+		fallbackFn: undefined,
+	}, options || {});
 	this._results = [];
 }
 
@@ -143,10 +147,7 @@ QueryInterface.prototype.$query = function (options) {
 		}
 		
 		if(options.includeCreated) {
-			var created = true;
-			if(typeof this.options.createdDefault !== 'undefined') {
-				created = !!this.options.createdDefault;
-			}
+			var created = !!this.options.createdDefault;
 			if(typeof result.options.wasCreated !== 'undefined') {
 				created = !!result.options.wasCreated;
 			}

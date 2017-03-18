@@ -22,8 +22,17 @@ describe('QueryInterface', function () {
 	
 	describe('__constructor', function () {
 		it('should save the options object', function () {
-			var qi = new QueryInterface('foo');
-			qi.options.should.equal('foo');
+			var qi = new QueryInterface({
+				foo: 'bar',
+			});
+			qi.options.should.be.an.Object();
+			qi.options.should.have.property('stopPropagation');
+			qi.options.should.have.property('createdDefault');
+			qi.options.should.have.property('fallbackFn');
+			qi.options.should.have.property('foo').which.is.exactly('bar');
+			
+			var qi = new QueryInterface();
+			qi.options.should.be.an.Object();
 		});
 		
 		it('should create a new results queue object', function () {
