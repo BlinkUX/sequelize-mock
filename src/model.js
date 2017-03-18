@@ -12,8 +12,10 @@
 
 var Promise = require('bluebird'),
 	_ = require('lodash'),
+	nodeutil = require('util'),
 	Utils = require('./utils'),
-	Instance = require('./instance');
+	Instance = require('./instance'),
+	QueryInterface = require('./queryinterface');
 
 /**
  * Model mock class. Models most often should be defined using the `sequelize.define()`
@@ -25,12 +27,38 @@ var Promise = require('bluebird'),
  * @param {Object} [defaults={}] The default values to use when creating a new instance
  * @param {Object} [opts] Options for the mock model
  * @param {Object} [opts.instanceMethods] Map of function names and the functions to be run. These functions will be added to any instances of this Model type
+ * @param {Object} [opts.sequelize] Sequelize instance that this is tied to
  **/
 function fakeModel (name, defaults, opts) {
 	if(typeof name === 'object') {
 		defaults = name;
 		name = '';
 	}
+	
+	var self = this;
+	
+	/**
+	 * The current options for the model
+	 * 
+	 * @member {Object}
+	 **/
+	this.options = _.extend({
+		timestamps: true,
+		instanceMethods: {},
+		classMethods: {},
+		freezeTableName: false,
+		stopPropagation: false,
+		createdDefault: true,
+		autoQueryFallback: true,
+	}, _.pick(
+		// Pick options that cascade down from the sequelize options object
+		opts && opts.sequelize ? opts.sequelize.options : {},
+		[
+			'autoQueryFallback',
+			'stopPropagation',
+			'fallbackFn',
+		]
+	), opts || {});
 	
 	/**
 	 * Name given to the model on initialization
@@ -39,19 +67,121 @@ function fakeModel (name, defaults, opts) {
 	 **/
 	this.name = name;
 	this._defaults = defaults || {};
-	this._functions = {};
-	if(opts && opts.instanceMethods) {
-		_.extend(this._functions, opts.instanceMethods);
-	}
-	this._wasCreated = true;
+	
+	this.tableName = this.options.tableName || (this.options.freezeTableName ? name : Utils.pluralize(name));
 	
 	/**
-	 * An empty object with the proper prototype for what functions an Instance gets
+	 * An lazy copy of Instance gets
 	 * 
 	 * @member {Object}
 	 **/
-	this.Instance = {};
-	this.Instance.prototype = this._functions;
+	this.Instance = function() {
+		Instance.apply(this, arguments);
+	};
+	nodeutil.inherits(this.Instance, Instance);
+	this.Instance.prototype = this.options.instanceMethods;
+	
+	// Setup Model QueryInterface
+	var qiOptions = {
+		stopPropagation: this.options.stopPropagation,
+		createdDefault: this.options.createdDefault,
+		fallbackFn: !this.options.autoQueryFallback ? this.build.bind(this) : null,
+	};
+	if(this.options.sequelize) {
+		qiOptions.parent = this.options.sequelize.getQueryInterface();
+	}
+	/**
+	 * QueryInterface used to run all queries against for models
+	 * 
+	 * If this model is defined with the `Sequelize.define` method, this QueryInterface
+	 * will reference the calling `Sequelize` instances QueryInterface when inheriting
+	 * any options or propagating any queries.
+	 * 
+	 * @member {QueryInterface}
+	 **/
+	this.$queryInterface = new QueryInterface(qiOptions);
+	
+	// Setup QueryInterface method calls
+	/**
+	 * Queues a result for any query run against this model. This result will be wrapped
+	 * in a Promise and resolved for most any method that would ordinarily run a query
+	 * against the database.
+	 * 
+	 * @example
+	 * UserMock.$queueResult(UserMock.build({
+	 * 	name: 'Alex',
+	 * }));
+	 * UserMock.findOne().then(function (result) {
+	 * 	// `result` is the passed in built object
+	 * 	result.get('name'); // 'Alex'
+	 * });
+	 * 
+	 * // For `findOrCreate` there is an extra option that can be passed in
+	 * UserMock.$queueResult(UserMock.build(), { wasCreated: false });
+	 * UserMock.findOrCreate({
+	 * 	// ...
+	 * }).spread(function (user, created) {
+	 * 	// created == false
+	 * });
+	 * 
+	 * @instance
+	 * @method $queueResult
+	 * @see {@link ./queryinterface.md|QueryInterface}
+	 * @param {Any} result The object or value to be returned as the result of a query
+	 * @param {Object} [options] Options used when returning the result
+	 * @param {Boolean} [options.wasCreated] Optional flag if a query requires a `created` value in the return indicating if the object was "created" in the DB
+	 * @param {Array<Any>} [options.affectedRows] Optional array of objects if the query requires an `affectedRows` return value
+	 * @return {QueryInterface} model instance of QueryInterface
+	 **/
+	this.$queueResult = this.$queryInterface.$queueResult.bind(this.$queryInterface);
+	/**
+	 * Queues an error/failure for any query run against this model. This error will be wrapped
+	 * in a rejected Promise and be returned for most any method that would ordinarily run a
+	 * query against the database.
+	 * 
+	 * @example
+	 * UserMock.$queueFailure(new Error('My test error'));
+	 * UserMock.findOne().catch(function (error) {
+	 * 	error.message; // 'My test error'
+	 * });
+	 * 
+	 * // Non error objects by default are converted to Sequelize.Error objects
+	 * UserMock.$queueFailure('Another Test Error');
+	 * UserMock.findOne().catch(function (error) {
+	 * 	error instanceof UserMock.sequelize.Error; // true
+	 * });
+	 * 
+	 * @instance
+	 * @method $queueFailure
+	 * @alias $queueError
+	 * @see {@link ./queryinterface.md|QueryInterface}
+	 * @param {Any} error The object or value to be returned as the failure for a query
+	 * @param {Object} [options] Options used when returning the result
+	 * @param {Boolean} [options.convertNonErrors] Flag indicating if non `Error` objects should be allowed. Defaults to true
+	 * @return {QueryInterface} model instance of QueryInterface
+	 **/
+	this.$queueFailure = this.$queueError = this.$queryInterface.$queueFailure.bind(this.$queryInterface);
+	/**
+	 * Clears any queued results or failures for this Model.
+	 * 
+	 * @example
+	 * UserMock.$queueResult(UserMock.build());
+	 * // == 1 item in query queue
+	 * UserMock.$queueFailure(new Error());
+	 * // == 2 items in query queue
+	 * UserMock.$clearQueue();
+	 * // == 0 items in query queue
+	 * 
+	 * @instance
+	 * @method $clearQueue
+	 * @alias $queueClear
+	 * @see {@link ./queryinterface.md|QueryInterface}
+	 * @param {Object} [options] Options used when returning the result
+	 * @param {Boolean} [options.propagateClear] Propagate this clear up to any parent `QueryInterface`s. Defaults to false
+	 * @return {QueryInterface} model instance of QueryInterface
+	 **/
+	this.$clearQueue = this.$queueClear = this.$queryInterface.$clearQueue.bind(this.$queryInterface);
+	this.$query = this.$queryInterface.$query.bind(this.$queryInterface);
 }
 
 /**
@@ -81,7 +211,7 @@ fakeModel.prototype.drop = function () {
  * @return {String} the name of the model
  **/
 fakeModel.prototype.getTableName = function () {
-	return this.name;
+	return this.tableName;
 };
 
 /**
@@ -103,10 +233,17 @@ fakeModel.prototype.scope = function () {
 };
 
 /**
- * Creates an array of a single result based on the where query in the options and
+ * Executes a mock query to find all of the instances with any provided options. Without
+ * any other configuration, the default behavior when no queueud query result is present
+ * is to create an array of a single result based on the where query in the options and
  * wraps it in a promise.
  * 
+ * To turn off this behavior, the `$autoQueryFallback` option on the model should be set
+ * to `false`.
+ * 
  * @example
+ * // This is an example of the default behavior with no queued results
+ * // If there is a queued result or failure, that will be returned instead
  * User.findAll({
  * 	where: {
  * 		email: 'myEmail@example.com',
@@ -117,30 +254,51 @@ fakeModel.prototype.scope = function () {
  * });
  * 
  * @instance
- * @param {Object} [options] Map of values that the instance should have
- * @return {Promise<Instance[]>} Promise that resolves with an array of length 1
+ * @param {Object} [options] Options for the findAll query
+ * @param {Object} [options.where] Values that any automatically created Instances should have
+ * @return {Promise<Instance[]>} result returned by the mock query
  **/
 fakeModel.prototype.findAll =  function (options) {
-	return Promise.resolve([ this.build(options ? options.where : {}) ]);
+	var self = this;
+	
+	return this.$query({
+		fallbackFn: !this.options.autoQueryFallback ? null : function () {
+			return Promise.resolve([ self.build(options ? options.where : {}) ]);
+		},
+	});
 };
 
 /**
- * Builds a new Instance with the given id and wraps it in a promise.
+ * Executes a mock query to find an instance with the given ID value. Without any other
+ * configuration, the default behavior when no queueud query result is present is to
+ * create a new Instance with the given id and wrap it in a promise.
+ * 
+ * To turn off this behavior, the `$autoQueryFallback` option on the model should be set
+ * to `false`.
  * 
  * @instance
- * @see {@link findAll}
  * @param {Integer} id ID of the instance
  * @return {Promise<Instance>} Promise that resolves with an instance with the given ID
  **/
 fakeModel.prototype.findById = function (id) {
-	return Promise.resolve( this.build({ id: id }) );
+	var self = this;
+	
+	return this.$query({
+		fallbackFn: !this.options.autoQueryFallback ? null : function () {
+			return Promise.resolve( self.build({ id: id }) );
+		},
+	});
 };
 
 /**
- * Builds a new Instance with the given properties pulled from the where object in the
- * options and wraps it in a promise.
+ * Executes a mock query to find an instance with the given infomation. Without any other
+ * configuration, the default behavior when no queueud query result is present is to
+ * build a new Instance with the given properties pulled from the where object in the
+ * options and wrap it in a promise.
  * 
  * @example
+ * // This is an example of the default behavior with no queued results
+ * // If there is a queued result or failure, that will be returned instead
  * User.find({
  * 	where: {
  * 		email: 'myEmail@example.com',
@@ -158,11 +316,19 @@ fakeModel.prototype.findById = function (id) {
  **/
 fakeModel.prototype.find =
 fakeModel.prototype.findOne = function (obj) {
-	return Promise.resolve( this.build(obj ? obj.where : {}) );
+	var self = this;
+	
+	return this.$query({
+		fallbackFn: !this.options.autoQueryFallback ? null : function () {
+			return Promise.resolve( self.build(obj ? obj.where : {}) );
+		},
+	});
 };
 
 /**
- * Returns the default value for the given field
+ * Executes a mock query to find the max value of a field. Without any other
+ * configuration, the default behavior when no queueud query result is present
+ * is to return the default value for the given field
  * 
  * @instance
  * @method
@@ -171,7 +337,9 @@ fakeModel.prototype.findOne = function (obj) {
  **/
 fakeModel.prototype.max =
 /**
- * Returns the default value for the given field
+ * Executes a mock query to find the min value of a field. Without any other
+ * configuration, the default behavior when no queueud query result is present
+ * is to return the default value for the given field
  * 
  * @instance
  * @method
@@ -180,7 +348,9 @@ fakeModel.prototype.max =
  **/
 fakeModel.prototype.min =
 /**
- * Returns the default value for the given field
+ * Executes a mock query to find the sum value of a field. Without any other
+ * configuration, the default behavior when no queueud query result is present
+ * is to return the default value for the given field
  * 
  * @instance
  * @method
@@ -188,7 +358,13 @@ fakeModel.prototype.min =
  * @return {Any} the default value for the given field
  **/
 fakeModel.prototype.sum = function (field) {
-	return Promise.resolve(this._defaults[field]);
+	var self = this;
+	
+	return this.$query({
+		fallbackFn: !this.options.autoQueryFallback ? null : function () {
+			return Promise.resolve(self._defaults[field]);
+		},
+	});
 };
 
 /**
@@ -200,8 +376,8 @@ fakeModel.prototype.sum = function (field) {
  **/
 fakeModel.prototype.build = function (options) {
 	var item = new Instance(this._defaults, options);
-	for(var f in this._functions) {
-		item[f] = this._functions[f];
+	for(var f in this.options.instanceMethods) {
+		item[f] = this.options.instanceMethods[f];
 	}
 	return item;
 };
@@ -218,7 +394,9 @@ fakeModel.prototype.create = function (obj) {
 	return this.build(obj).save();
 };
 /**
- * By default triggers a create action based on the given properties from the where in
+ * Executes a mock query to find or create an Instance with the given properties. Without
+ * any other configuration, the default behavior when no queueud query result is present
+ * is to trigger a create action based on the given properties from the where in
  * the options object.
  * 
  * @instance
@@ -229,17 +407,22 @@ fakeModel.prototype.create = function (obj) {
  * @return {Promise<Array<Instance, Boolean>>} Promise that includes the instance and whether or not it was created
  **/
 fakeModel.prototype.findOrCreate = function (obj) {
-	var result = this.build(obj.where);
-	if(this._wasCreated) {
-		return result.save().then(function () {
-			return Promise.resolve([result, true]);
-		});
-	}
-	return Promise.resolve( [result, false] );
+	var self = this;
+	
+	return this.$query({
+		includeCreated: true,
+		fallbackFn: !this.options.autoQueryFallback ? null : function () {
+			return self.build(obj.where).save().then(function (result) {
+					return Promise.resolve([result, true]);
+				});
+		},
+	});
 };
 
 /**
- * Attempts to save an instance with the given options. By default will return true
+ * Executes a mock query to upsert an Instance with the given properties. Without any
+ * other configuration, the default behavior when no queueud query result is present is
+ * to return the `options.createdDefault` value indicating if a new item has been created
  * 
  * @instance
  * @method upsert
@@ -249,11 +432,19 @@ fakeModel.prototype.findOrCreate = function (obj) {
  **/
 fakeModel.prototype.insertOrUpdate =
 fakeModel.prototype.upsert = function (values) {
-	return this.build(values).save().return(!!this._wasCreated);
+	var self = this;
+	
+	return this.$query({
+		fallbackFn: !this.options.autoQueryFallback ? null : function () {
+			return self.build(values).save().return(self.options.createdDefault);
+		},
+	});
 }
 
 /**
- * Takes an array of value sets and creates a set of instances of this model.
+ * Executes a mock query to create a set of new Instances in a bulk fashion. Without any
+ * other configuration, the default behavior when no queueud query result is present is
+ * to trigger a create on each item in a the given `set`.
  * 
  * @instance
  * @see {@link create}
@@ -261,12 +452,19 @@ fakeModel.prototype.upsert = function (values) {
  * @return {Promise<Instance[]>} Promise that contains all created Instances
  **/
 fakeModel.prototype.bulkCreate = function (set, options) {
-	return Promise.all( _.map(set, this.create.bind(this)) );
+	var self = this;
+	
+	return this.$query({
+		fallbackFn: !this.options.autoQueryFallback ? null : function () {
+			return Promise.all( _.map(set, self.create.bind(self)) );
+		},
+	});
 };
 
 /**
- * Always resolves with either the limit from the options or a 1, indicating how many
- * rows would be deleted
+ * Executes a mock query to destroy a set of Instances. Without any other configuration,
+ * the default behavior when no queueud query result is present is to resolve with either
+ * the limit from the options or a 1.
  * 
  * @instance
  * @param {Object} [options] Options for the query
@@ -274,20 +472,41 @@ fakeModel.prototype.bulkCreate = function (set, options) {
  * @return {Promise<Integer>} Promise with number of deleted rows
  **/
 fakeModel.prototype.destroy = function (options) {
-	return Promise.resolve(options && typeof options.limit == 'number' ? options.limit : 1);
+	var self = this;
+	
+	return this.$query({
+		fallbackFn: !this.options.autoQueryFallback ? null : function () {
+			return Promise.resolve(options && typeof options.limit == 'number' ? options.limit : 1);
+		},
+	});
 };
 
 /**
- * Creates 1 new Instance that matches the where value from the first parameter and
- * returns a Promise with an array of the count of affected rows (always 1) and the
- * affected rows (the newly created Instance)
+ * Executes a mock query to update a set of instances. Without any other configuration,
+ * the default behavior when no queueud query result is present is to create 1 new
+ * Instance that matches the where value from the first parameter and returns a Promise
+ * with an array of the count of affected rows (always 1) and the affected rows if the
+ * `returning` option is set to true
  * 
  * @instance
  * @param {Object} values Values to build the Instance
- * @return {Promise<Array<Integer, Array<Instance>>>} Promise with an array of the number of affected rows and the affected rows themselves
+ * @param {Object} [options] Options to use for the update
+ * @param {Object} [options.returning] Whether or not to include the updated models in the return
+ * @return {Promise<Array<Integer, Array<Instance>>>} Promise with an array of the number of affected rows and the affected rows themselves if `options.returning` is true
  **/
-fakeModel.prototype.update = function (values) {
-	return Promise.resolve([ 1, [this.build(values)] ]);
+fakeModel.prototype.update = function (values, options) {
+	var self = this;
+	options = options || {};
+	
+	return this.$query({
+		includeAffectedRows: !!options.returning,
+		fallbackFn: !this.options.autoQueryFallback ? null : function () {
+			if(!options.returning) {
+				return Promise.resolve([1]);
+			}
+			return Promise.resolve([ 1, [self.build(values)] ]);
+		},
+	});
 };
 
 // Noops

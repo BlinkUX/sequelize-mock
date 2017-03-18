@@ -263,6 +263,10 @@ Sequelize.prototype.getQueryInterface = function() {
  * @return {Model} Mock Model as defined by the name, default values, and options provided
  */
 Sequelize.prototype.define = function (name, obj, opts) {
+	opts = _.extend({
+		sequelize: this,
+	}, opts || {})
+	
 	var model = new Model(name, obj, opts);
 	this.models[name] = model;
 	return model;
