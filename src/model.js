@@ -71,7 +71,7 @@ function fakeModel (name, defaults, opts) {
 	this.tableName = this.options.tableName || (this.options.freezeTableName ? name : Utils.pluralize(name));
 	
 	/**
-	 * An lazy copy of Instance gets
+	 * An copy of the Instance class to mirror Sequelize
 	 * 
 	 * @member {Object}
 	 **/
@@ -126,7 +126,7 @@ function fakeModel (name, defaults, opts) {
 	 * 
 	 * @instance
 	 * @method $queueResult
-	 * @see {@link ./queryinterface.md|QueryInterface}
+	 * @see {@link ./queryinterface.md#queueResult|QueryInterface.$queueResult}
 	 * @param {Any} result The object or value to be returned as the result of a query
 	 * @param {Object} [options] Options used when returning the result
 	 * @param {Boolean} [options.wasCreated] Optional flag if a query requires a `created` value in the return indicating if the object was "created" in the DB
@@ -154,7 +154,7 @@ function fakeModel (name, defaults, opts) {
 	 * @instance
 	 * @method $queueFailure
 	 * @alias $queueError
-	 * @see {@link ./queryinterface.md|QueryInterface}
+	 * @see {@link ./queryinterface.md#queueFailure|QueryInterface.$queueFailure}
 	 * @param {Any} error The object or value to be returned as the failure for a query
 	 * @param {Object} [options] Options used when returning the result
 	 * @param {Boolean} [options.convertNonErrors] Flag indicating if non `Error` objects should be allowed. Defaults to true
@@ -175,7 +175,7 @@ function fakeModel (name, defaults, opts) {
 	 * @instance
 	 * @method $clearQueue
 	 * @alias $queueClear
-	 * @see {@link ./queryinterface.md|QueryInterface}
+	 * @see {@link ./queryinterface.md#clearQueue|QueryInterface.$clearQueue}
 	 * @param {Object} [options] Options used when returning the result
 	 * @param {Boolean} [options.propagateClear] Propagate this clear up to any parent `QueryInterface`s. Defaults to false
 	 * @return {QueryInterface} model instance of QueryInterface
@@ -492,7 +492,7 @@ fakeModel.prototype.destroy = function (options) {
  * @param {Object} values Values to build the Instance
  * @param {Object} [options] Options to use for the update
  * @param {Object} [options.returning] Whether or not to include the updated models in the return
- * @return {Promise<Array<Integer, Array<Instance>>>} Promise with an array of the number of affected rows and the affected rows themselves if `options.returning` is true
+ * @return {Promise<Array>} Promise with an array of the number of affected rows and the affected rows themselves if `options.returning` is true
  **/
 fakeModel.prototype.update = function (values, options) {
 	var self = this;

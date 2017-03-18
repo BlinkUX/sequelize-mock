@@ -21,7 +21,15 @@ name | Object | Name of the model
 [defaults={}] | Object | The default values to use when creating a new instance
 [opts] | Object | Options for the mock model
 [opts.instanceMethods] | Object | Map of function names and the functions to be run. These functions will be added to any instances of this Model type
+[opts.sequelize] | Object | Sequelize instance that this is tied to
 
+
+
+
+<a name="options"></a>
+### .options
+
+The current options for the model
 
 
 
@@ -33,9 +41,139 @@ Name given to the model on initialization
 
 
 <a name="Instance"></a>
-### .Instance
+### #Instance()
 
-An empty object with the proper prototype for what functions an Instance gets
+An copy of the Instance class to mirror Sequelize
+
+
+
+<a name="queryInterface"></a>
+### .$queryInterface
+
+QueryInterface used to run all queries against for models
+
+If this model is defined with the `Sequelize.define` method, this QueryInterface
+will reference the calling `Sequelize` instances QueryInterface when inheriting
+any options or propagating any queries.
+
+
+
+<a name="queueResult"></a>
+## $queueResult(result, [options]) -> QueryInterface
+
+Queues a result for any query run against this model. This result will be wrapped
+in a Promise and resolved for most any method that would ordinarily run a query
+against the database.
+
+**Example**
+
+```javascript
+UserMock.$queueResult(UserMock.build({
+	name: 'Alex',
+}));
+UserMock.findOne().then(function (result) {
+	// `result` is the passed in built object
+	result.get('name'); // 'Alex'
+});
+
+// For `findOrCreate` there is an extra option that can be passed in
+UserMock.$queueResult(UserMock.build(), { wasCreated: false });
+UserMock.findOrCreate({
+	// ...
+}).spread(function (user, created) {
+	// created == false
+});
+```
+
+**See**
+
+ - [QueryInterface.$queueResult](./queryinterface.md#queueResult)
+
+###  Parameters
+
+Name | Type | Description
+--- | --- | ---
+result | Any | The object or value to be returned as the result of a query
+[options] | Object | Options used when returning the result
+[options.wasCreated] | Boolean | Optional flag if a query requires a `created` value in the return indicating if the object was "created" in the DB
+[options.affectedRows] | Array.&#60;Any&#62; | Optional array of objects if the query requires an `affectedRows` return value
+
+
+###  Return
+`QueryInterface`: model instance of QueryInterface
+
+
+
+<a name="queueFailure"></a>
+## $queueFailure(error, [options]) -> QueryInterface
+
+Queues an error/failure for any query run against this model. This error will be wrapped
+in a rejected Promise and be returned for most any method that would ordinarily run a
+query against the database. <br>**Alias** $queueError
+
+**Example**
+
+```javascript
+UserMock.$queueFailure(new Error('My test error'));
+UserMock.findOne().catch(function (error) {
+	error.message; // 'My test error'
+});
+
+// Non error objects by default are converted to Sequelize.Error objects
+UserMock.$queueFailure('Another Test Error');
+UserMock.findOne().catch(function (error) {
+	error instanceof UserMock.sequelize.Error; // true
+});
+```
+
+**See**
+
+ - [QueryInterface.$queueFailure](./queryinterface.md#queueFailure)
+
+###  Parameters
+
+Name | Type | Description
+--- | --- | ---
+error | Any | The object or value to be returned as the failure for a query
+[options] | Object | Options used when returning the result
+[options.convertNonErrors] | Boolean | Flag indicating if non `Error` objects should be allowed. Defaults to true
+
+
+###  Return
+`QueryInterface`: model instance of QueryInterface
+
+
+
+<a name="clearQueue"></a>
+## $clearQueue([options]) -> QueryInterface
+
+Clears any queued results or failures for this Model. <br>**Alias** $queueClear
+
+**Example**
+
+```javascript
+UserMock.$queueResult(UserMock.build());
+// == 1 item in query queue
+UserMock.$queueFailure(new Error());
+// == 2 items in query queue
+UserMock.$clearQueue();
+// == 0 items in query queue
+```
+
+**See**
+
+ - [QueryInterface.$clearQueue](./queryinterface.md#clearQueue)
+
+###  Parameters
+
+Name | Type | Description
+--- | --- | ---
+[options] | Object | Options used when returning the result
+[options.propagateClear] | Boolean | Propagate this clear up to any parent `QueryInterface`s. Defaults to false
+
+
+###  Return
+`QueryInterface`: model instance of QueryInterface
 
 
 
@@ -92,12 +230,19 @@ No-op that returns the current object
 <a name="findAll"></a>
 ## findAll([options]) -> Promise.&#60;Array.&#60;Instance&#62;&#62;
 
-Creates an array of a single result based on the where query in the options and
+Executes a mock query to find all of the instances with any provided options. Without
+any other configuration, the default behavior when no queueud query result is present
+is to create an array of a single result based on the where query in the options and
 wraps it in a promise.
+
+To turn off this behavior, the `$autoQueryFallback` option on the model should be set
+to `false`.
 
 **Example**
 
 ```javascript
+// This is an example of the default behavior with no queued results
+// If there is a queued result or failure, that will be returned instead
 User.findAll({
 	where: {
 		email: 'myEmail@example.com',
@@ -112,22 +257,24 @@ User.findAll({
 
 Name | Type | Description
 --- | --- | ---
-[options] | Object | Map of values that the instance should have
+[options] | Object | Options for the findAll query
+[options.where] | Object | Values that any automatically created Instances should have
 
 
 ###  Return
-`Promise.<Array.<Instance>>`: Promise that resolves with an array of length 1
+`Promise.<Array.<Instance>>`: result returned by the mock query
 
 
 
 <a name="findById"></a>
 ## findById(id) -> Promise.&#60;Instance&#62;
 
-Builds a new Instance with the given id and wraps it in a promise.
+Executes a mock query to find an instance with the given ID value. Without any other
+configuration, the default behavior when no queueud query result is present is to
+create a new Instance with the given id and wrap it in a promise.
 
-**See**
-
- - [findAll](#findAll)
+To turn off this behavior, the `$autoQueryFallback` option on the model should be set
+to `false`.
 
 ###  Parameters
 
@@ -144,12 +291,16 @@ id | Integer | ID of the instance
 <a name="findOne"></a>
 ## findOne([options]) -> Promise.&#60;Instance&#62;
 
-Builds a new Instance with the given properties pulled from the where object in the
-options and wraps it in a promise. <br>**Alias** find
+Executes a mock query to find an instance with the given infomation. Without any other
+configuration, the default behavior when no queueud query result is present is to
+build a new Instance with the given properties pulled from the where object in the
+options and wrap it in a promise. <br>**Alias** find
 
 **Example**
 
 ```javascript
+// This is an example of the default behavior with no queued results
+// If there is a queued result or failure, that will be returned instead
 User.find({
 	where: {
 		email: 'myEmail@example.com',
@@ -178,7 +329,9 @@ Name | Type | Description
 <a name="max"></a>
 ## max(field) -> Any
 
-Returns the default value for the given field
+Executes a mock query to find the max value of a field. Without any other
+configuration, the default behavior when no queueud query result is present
+is to return the default value for the given field
 
 ###  Parameters
 
@@ -195,7 +348,9 @@ field | String | Name of the field to return for
 <a name="min"></a>
 ## min(field) -> Any
 
-Returns the default value for the given field
+Executes a mock query to find the min value of a field. Without any other
+configuration, the default behavior when no queueud query result is present
+is to return the default value for the given field
 
 ###  Parameters
 
@@ -212,7 +367,9 @@ field | String | Name of the field to return for
 <a name="sum"></a>
 ## sum(field) -> Any
 
-Returns the default value for the given field
+Executes a mock query to find the sum value of a field. Without any other
+configuration, the default behavior when no queueud query result is present
+is to return the default value for the given field
 
 ###  Parameters
 
@@ -268,7 +425,9 @@ options | Object | Map of values that the instance should have
 <a name="findOrCreate"></a>
 ## findOrCreate(options) -> Promise.&#60;Array.&#60;Instance, Boolean&#62;&#62;
 
-By default triggers a create action based on the given properties from the where in
+Executes a mock query to find or create an Instance with the given properties. Without
+any other configuration, the default behavior when no queueud query result is present
+is to trigger a create action based on the given properties from the where in
 the options object.
 
 **See**
@@ -292,7 +451,9 @@ options.where | Object | Map of values that the instance should have
 <a name="upsert"></a>
 ## upsert(values) -> Promise.&#60;Boolean&#62;
 
-Attempts to save an instance with the given options. By default will return true <br>**Alias** insertOrUpdate
+Executes a mock query to upsert an Instance with the given properties. Without any
+other configuration, the default behavior when no queueud query result is present is
+to return the `options.createdDefault` value indicating if a new item has been created <br>**Alias** insertOrUpdate
 
 ###  Parameters
 
@@ -309,7 +470,9 @@ values | Object | Values of the Instance being created
 <a name="bulkCreate"></a>
 ## bulkCreate(set) -> Promise.&#60;Array.&#60;Instance&#62;&#62;
 
-Takes an array of value sets and creates a set of instances of this model.
+Executes a mock query to create a set of new Instances in a bulk fashion. Without any
+other configuration, the default behavior when no queueud query result is present is
+to trigger a create on each item in a the given `set`.
 
 **See**
 
@@ -330,8 +493,9 @@ set | Array.&#60;Object&#62; | Set of values to create objects for
 <a name="destroy"></a>
 ## destroy([options]) -> Promise.&#60;Integer&#62;
 
-Always resolves with either the limit from the options or a 1, indicating how many
-rows would be deleted
+Executes a mock query to destroy a set of Instances. Without any other configuration,
+the default behavior when no queueud query result is present is to resolve with either
+the limit from the options or a 1.
 
 ###  Parameters
 
@@ -347,19 +511,23 @@ Name | Type | Description
 
 
 <a name="update"></a>
-## update(values) -> Promise.&#60;Array.&#60;Integer, Array.&#60;Instance&#62;&#62;&#62;
+## update(values, [options]) -> Promise.&#60;Array&#62;
 
-Creates 1 new Instance that matches the where value from the first parameter and
-returns a Promise with an array of the count of affected rows (always 1) and the
-affected rows (the newly created Instance)
+Executes a mock query to update a set of instances. Without any other configuration,
+the default behavior when no queueud query result is present is to create 1 new
+Instance that matches the where value from the first parameter and returns a Promise
+with an array of the count of affected rows (always 1) and the affected rows if the
+`returning` option is set to true
 
 ###  Parameters
 
 Name | Type | Description
 --- | --- | ---
 values | Object | Values to build the Instance
+[options] | Object | Options to use for the update
+[options.returning] | Object | Whether or not to include the updated models in the return
 
 
 ###  Return
-`Promise.<Array.<Integer, Array.<Instance>>>`: Promise with an array of the number of affected rows and the affected rows themselves
+`Promise.<Array>`: Promise with an array of the number of affected rows and the affected rows themselves if `options.returning` is true
 
