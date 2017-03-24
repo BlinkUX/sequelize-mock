@@ -1,7 +1,9 @@
 # Sequelize Mock
 [![npm](https://img.shields.io/npm/v/sequelize-mock.svg)](https://www.npmjs.com/package/sequelize-mock) [![CircleCI](https://img.shields.io/circleci/project/BlinkUX/sequelize-mock.svg)](https://circleci.com/gh/BlinkUX/sequelize-mock) [![Coveralls](https://img.shields.io/coveralls/BlinkUX/sequelize-mock.svg)](https://coveralls.io/github/BlinkUX/sequelize-mock) [![MIT License](https://img.shields.io/github/license/BlinkUX/sequelize-mock.svg)](https://github.com/BlinkUX/sequelize-mock) [![Documentation Status](https://readthedocs.org/projects/sequelize-mock/badge/?version=stable)](http://sequelize-mock.readthedocs.io/en/stable/?badge=stable)
 
-A simple mocking interface designed for applications that use the [sequelize.js](http://sequelizejs.com) library. Specifically, this library was created for unit testing code which relies on Sequelize Models.
+A mocking interface designed for testing code that uses [Sequelize](http://sequelizejs.com).
+
+Documentation at [sequelize-mock.readthedocs.io](https://sequelize-mock.readthedocs.io/)
 
 ## Install
 
