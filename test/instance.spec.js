@@ -20,33 +20,60 @@ var ErrorMock = {
 var Instance = proxyquire('../src/instance', {
 	'./errors' : ErrorMock,
 });
+Instance.prototype.Model = {
+	options: {},
+};
 
 describe('Instance', function () {
 	
+	var instGet, instSet;
+	beforeEach(function () {
+		instGet = Instance.prototype.get;
+		instSet = Instance.prototype.set;
+	});
+	afterEach(function () {
+		Instance.prototype.get = instGet;
+		Instance.prototype.set = instSet;
+		Instance.prototype.Model.options = {};
+	});
+	
 	describe('__constructor', function () {
-		it('should always assign an id, createdAt, and updatedAt value', function () {
+		it('should assign an id, createdAt, and updatedAt value if the model has them', function () {
+			Instance.prototype.Model.options = {
+				hasPrimaryKeys: true,
+				timestamps: true,
+			};
 			var inst = new Instance();
 			
 			inst._values.should.have.property('id');
 			inst._values.should.have.property('createdAt');
 			inst._values.should.have.property('updatedAt');
 		});
-		it('should not modify the passed in objects', function () {
-			var defaults = {
-					defKey: 'value',
-				},
-				values = {
+		it('should not assign an id, createdAt, or updatedAt value if the model does not have them', function () {
+			Instance.prototype.Model.options = {
+				hasPrimaryKeys: false,
+				timestamps: false,
+			};
+			var inst = new Instance();
+			
+			inst._values.should.not.have.property('id');
+			inst._values.should.not.have.property('createdAt');
+			inst._values.should.not.have.property('updatedAt');
+		});
+		it('should not modify the passed in object', function () {
+			var values = {
 					instKey: 'value',
 				};
-			var inst = new Instance(defaults, values);
+			Instance.prototype.Model.options = {
+				hasPrimaryKeys: true,
+			};
+			var inst = new Instance(values);
 			
 			values.should.have.property('instKey');
-			values.should.not.have.property('defKey');
-			defaults.should.have.property('defKey');
-			defaults.should.not.have.property('instKey');
+			values.should.not.have.property('id');
 		});
 		it('should not override passed in id, createdAt, and updatedAt values', function () {
-			var inst = new Instance({}, {
+			var inst = new Instance({
 				id: 5555,
 				createdAt: 'Yesterday',
 				updatedAt: 'Yesterday',
@@ -57,25 +84,32 @@ describe('Instance', function () {
 			inst._values.should.have.property('updatedAt').which.is.exactly('Yesterday');
 		});
 		
-		it('should assign any default values', function () {
+		it('should assign any passed in values', function () {
 			var inst = new Instance({
 				'foo': 'bar',
 			});
 			
 			inst._values.should.have.property('foo').which.is.exactly('bar');
-			inst._values.should.not.have.property('baz');
 		});
 		
-		it('should override default values with passed in values', function () {
+		it('should create getters/setters for each of the properties', function () {
+			var getRun = 0,
+				setRun = 0;
+			Instance.prototype.get = function () {
+				getRun++;
+			};
+			Instance.prototype.set = function () {
+				setRun++;
+			};
 			var inst = new Instance({
 				'foo': 'bar',
-				'baz': 'bin',
-			}, {
-				'foo': 'test',
 			});
 			
-			inst._values.should.have.property('foo').which.is.exactly('test');
-			inst._values.should.have.property('baz').which.is.exactly('bin');
+			inst._values.should.have.property('foo').which.is.exactly('bar');
+			inst.foo;
+			getRun.should.equal(1);
+			inst.foo = 'baz';
+			setRun.should.equal(1);
 		});
 	});
 	
@@ -124,7 +158,7 @@ describe('Instance', function () {
 		});
 		
 		it('should return validation errors if added to the instance', function (done) {
-			var inst = new Instance({}, { 'test': 'val' });
+			var inst = new Instance({ 'test': 'val' });
 			inst.$addValidationError('test', 'Test Error Message', 'mock test type');
 			
 			inst.validate().then(function (err) {
@@ -139,7 +173,7 @@ describe('Instance', function () {
 		});
 		
 		it('should set default values for validation errors if missing information', function (done) {
-			var inst = new Instance({});
+			var inst = new Instance();
 			inst.$addValidationError();
 			
 			inst.validate().then(function (err) {

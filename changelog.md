@@ -4,7 +4,12 @@ vNext
   * Add `$queueResult()`, `$queueFailure()`, and `$clearQueue()` test methods to `Sequelize` and `Model` objects
   * Add `QueryInterface` object to support test result mocking
   * Add `getQueryInterface()` to Sequelize instances which will get the associated `QueryInterface` object
+  * Add getters/setters for accessing Instance data values via using the simple object syntax (e.g. `instance.foo = 'bar'`)
+  * Add support for `hasPrimary` and `timestamps` options on Models
+  * Add `instance.Model` reference to the calling `Model` object that the instance is based on
+  * Change `Model.Instance` can now be directly used to create a mock `Instance` object of the given model
   * BREAKING The `query()` method for Sequelize instances will now throw instead of returning a rejected `Promise` by default. See the `$queueResult` or `$queueFailure` methods for getting proper returns from calls to this function
+  * BREAKING The `Instance` object should now only be instantiated by going through a Model using either `model.build()` or `Model.Instance`
   * *DEV* Added HTML code coverage report to default `npm test` run
 
 v0.7.0 - bcfb924 - Feb 3rd 2017

@@ -43,6 +43,7 @@ function fakeModel (name, defaults, opts) {
 	 * @member {Object}
 	 **/
 	this.options = _.extend({
+		hasPrimaryKeys: true,
 		timestamps: true,
 		instanceMethods: {},
 		classMethods: {},
@@ -71,7 +72,7 @@ function fakeModel (name, defaults, opts) {
 	this.tableName = this.options.tableName || (this.options.freezeTableName ? name : Utils.pluralize(name));
 	
 	/**
-	 * An copy of the Instance class to mirror Sequelize
+	 * The Model's copy of the Instance class used to build instances
 	 * 
 	 * @member {Object}
 	 **/
@@ -79,7 +80,13 @@ function fakeModel (name, defaults, opts) {
 		Instance.apply(this, arguments);
 	};
 	nodeutil.inherits(this.Instance, Instance);
-	this.Instance.prototype = this.options.instanceMethods;
+	
+	if(this.options.instanceMethods) {
+		_.each(this.options.instanceMethods, function (fn, name) {
+			self.Instance.prototype[name] = fn;
+		});
+	}
+	this.Instance.prototype.Model = this;
 	
 	// Setup Model QueryInterface
 	var qiOptions = {
@@ -371,15 +378,28 @@ fakeModel.prototype.sum = function (field) {
  * Builds a new Instance with the given properties
  * 
  * @instance
- * @param {Object} [options] Map of values that the instance should have
+ * @param {Object} [values] Map of values that the instance should have
+ * @param {Object} [options] Options for creating the instance
+ * @param {Object} [options.isNewRecord] Flag inidicating if this is a new mock record. Defaults to true
  * @return {Instance} a new instance with any given properties
  **/
-fakeModel.prototype.build = function (options) {
-	var item = new Instance(this._defaults, options);
-	for(var f in this.options.instanceMethods) {
-		item[f] = this.options.instanceMethods[f];
+fakeModel.prototype.build = function (values, options) {
+	options = _.extend({}, options || {}, {
+		// Options set from model
+		timestamps: this.options.timestamps,
+		paranoid: this.options.paranoid,
+		createdAt: this.options.createdAt,
+		updatedAt: this.options.updatedAt,
+		deletedAt: this.options.deletedAt,
+	});
+	
+	if(typeof options.isNewRecord != 'boolean') {
+		options.isNewRecord = true;
 	}
-	return item;
+	
+	values = _.extend({}, this._defaults, values);
+	
+	return new this.Instance(values, options);
 };
 /**
  * Creates a new Instance with the given properties and triggers a save
@@ -535,7 +555,7 @@ fakeModel.prototype.belongsTo = fakeModel.prototype.hasOne = function (item, opt
 		noop = function () { return Promise.resolve(self); };
 	
 	if(isString) {
-		this._functions['get' + singular] = function (opts) { return Promise.resolve(new Instance(null, opts && opts.where ? opts.where : opts)); };
+		this._functions['get' + singular] = function (opts) { return Promise.resolve(new self.Instance(opts && opts.where ? opts.where : opts)); };
 	} else {
 		this._functions['get' + singular] = item.findOne.bind(item);
 	}
@@ -573,7 +593,7 @@ fakeModel.prototype.belongsToMany = fakeModel.prototype.hasMany = function (item
 		noop = function () { return Promise.resolve(self); };
 	
 	if(isString) {
-		this._functions['get' + plural] = function (opts) { return Promise.resolve([new Instance(name, opts && opts.where ? opts.where : opts)]); };
+		this._functions['get' + plural] = function (opts) { return Promise.resolve([new self.Instance(opts && opts.where ? opts.where : opts)]); };
 	} else {
 		this._functions['get' + plural] = item.findAll.bind(item);
 	}

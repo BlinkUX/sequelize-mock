@@ -228,7 +228,7 @@ describe('Model', function () {
 			mdl = new Model('foo');
 		});
 		
-		it('should pass along the default values and the override values to Instance', function () {
+		it('should pass along the default values and the override values to Instance in a combined object', function () {
 			mdl._defaults = {
 				'foo': 'bar'
 			};
@@ -237,8 +237,9 @@ describe('Model', function () {
 			};
 			
 			var inst = mdl.build(vals);
-			inst._args[0].should.equal(mdl._defaults);
-			inst._args[1].should.equal(vals);
+			var passed = inst._args[0];
+			passed.should.have.property('foo').which.is.exactly('bar');
+			passed.should.have.property('baz').which.is.exactly('bin');
 		});
 		
 		it('should build Instance with Instance.prototype functions', function () {
@@ -263,7 +264,7 @@ describe('Model', function () {
 			
 			mdl.create(vals).then(function (inst) {
 				inst.should.be.instanceOf(InstanceMock);
-				inst._args[1].should.equal(vals);
+				inst._args[0].should.have.property('baz').which.is.exactly('bin');
 				done();
 			}).catch(done);
 		});
@@ -294,7 +295,7 @@ describe('Model', function () {
 			mdl.update(vals, {returning: true})
 				.fallbackFn().spread(function (number, rows) {
 					rows.should.be.Array();
-					rows[0]._args[1].should.equal(vals);
+					rows[0]._args[0].should.have.property('baz').which.is.exactly('bin');
 					done();
 				}).catch(done);
 		});
@@ -329,7 +330,7 @@ describe('Model', function () {
 			
 			mdl.findOne(options)
 				.fallbackFn().then(function (inst) {
-					inst._args[1].should.equal(options.where);
+					inst._args[0].should.have.property('foo').which.is.exactly('bar');
 					done();
 				}).catch(done);
 		});
@@ -349,7 +350,7 @@ describe('Model', function () {
 		it('should find a row with the given id', function (done) {
 			mdl.findById(1234)
 				.fallbackFn().then(function (inst) {
-					inst._args[1].id.should.equal(1234);
+					inst._args[0].id.should.equal(1234);
 					done();
 				}).catch(done);
 		});
@@ -417,7 +418,7 @@ describe('Model', function () {
 			
 			mdl.findOrCreate(options)
 				.fallbackFn().spread(function (inst, created) {
-					inst._args[1].should.equal(options.where);
+					inst._args[0].should.have.property('foo').which.is.exactly('bar');
 					done();
 				}).catch(done);
 		});
@@ -455,8 +456,8 @@ describe('Model', function () {
 			mdl.bulkCreate(vals)
 				.fallbackFn().then(function (arr) {
 					arr.should.be.an.Array();
-					arr[0]._args[1].should.equal(vals[0]);
-					arr[1]._args[1].should.equal(vals[1]);
+					arr[0]._args[0].should.have.property('baz').which.is.exactly('bin');
+					arr[1]._args[0].should.have.property('qux').which.is.exactly('quuz');
 					done();
 				}).catch(done);
 		});
@@ -483,7 +484,7 @@ describe('Model', function () {
 			mdl.findAll(options)
 				.fallbackFn().then(function (rows) {
 					rows.length.should.equal(1);
-					rows[0]._args[1].should.equal(options.where);
+					rows[0]._args[0].should.have.property('foo').which.is.exactly('bar');
 					done();
 				}).catch(done);
 		});

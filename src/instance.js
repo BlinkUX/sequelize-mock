@@ -40,26 +40,49 @@ var id = 0;
  * @param {Object} defaults The default values. This will come from the Model when created via that class
  * @param {Object} [obj] Any overridden values that should be specific to this instance
  **/
-function fakeModelInstance (defaults, obj) {
-	id++;
+function fakeModelInstance (values, options) {
+	this.options = options || {};
+	
 	/**
-	 * As with Sequelize, we include a `_values` property which contains the values for the
+	 * As with Sequelize, we include a `dataValues` property which contains the values for the
 	 * instance. As with Sequelize, you should use other methods to edit the values for any
 	 * code that will also interact with Sequelize.
 	 * 
 	 * For test code, when possible, we also recommend you use other means to validate. But
 	 * this object is also available if needed.
 	 * 
+	 * @name dataValues
+	 * @alias _values
 	 * @member {Object}
 	 **/
-	this._values = _.clone(obj || {});
-	_.defaultsDeep(this._values, defaults || {});
-	this._values.id = this._values.id || id;
-	this._values.createdAt = this._values.createdAt || new Date();
-	this._values.updatedAt = this._values.updatedAt || new Date();
+	this.dataValues = this._values = _.clone(values || {});
+	
+	this.hasPrimaryKeys = this.Model.options.hasPrimaryKeys;
+	if(this.hasPrimaryKeys) {
+		this.dataValues.id = this.dataValues.id || (++id);
+	}
+	
+	if(this.Model.options.timestamps) {
+		this.dataValues.createdAt = this.dataValues.createdAt || new Date();
+		this.dataValues.updatedAt = this.dataValues.updatedAt || new Date();
+	}
 	
 	// Double underscore for test specific internal variables
 	this.__validationErrors = [];
+	
+	// Add the items from the dataValues to be accessible via a simple `instance.value` call
+	var self = this;
+	_.each(this.dataValues, function (val, key) {
+		
+		Object.defineProperty(self, key, {
+			get: function () {
+				return fakeModelInstance.prototype.get.call(self, key);
+			},
+			set: function (value) {
+				fakeModelInstance.prototype.set.call(self, key, value);
+			},
+		});
+	});
 }
 
 /* Test Specific Functionality
