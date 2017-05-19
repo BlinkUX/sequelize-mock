@@ -38,15 +38,15 @@ defaults | Object | The default values. This will come from the Model when creat
 
 
 
-<a name="values"></a>
-### ._values
+<a name="dataValues"></a>
+### .dataValues
 
-As with Sequelize, we include a `_values` property which contains the values for the
+As with Sequelize, we include a `dataValues` property which contains the values for the
 instance. As with Sequelize, you should use other methods to edit the values for any
 code that will also interact with Sequelize.
 
 For test code, when possible, we also recommend you use other means to validate. But
-this object is also available if needed.
+this object is also available if needed. <br>**Alias** _values
 
 
 

@@ -43,7 +43,7 @@ Name given to the model on initialization
 <a name="Instance"></a>
 ### #Instance()
 
-An copy of the Instance class to mirror Sequelize
+The Model's copy of the Instance class used to build instances
 
 
 
@@ -384,7 +384,7 @@ field | String | Name of the field to return for
 
 
 <a name="build"></a>
-## build([options]) -> Instance
+## build([values], [options]) -> Instance
 
 Builds a new Instance with the given properties
 
@@ -392,7 +392,9 @@ Builds a new Instance with the given properties
 
 Name | Type | Description
 --- | --- | ---
-[options] | Object | Map of values that the instance should have
+[values] | Object | Map of values that the instance should have
+[options] | Object | Options for creating the instance
+[options.isNewRecord] | Object | Flag inidicating if this is a new mock record. Defaults to true
 
 
 ###  Return

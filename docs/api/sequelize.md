@@ -20,6 +20,8 @@ Name | Type | Description
 [password] | String | Ignored for Mock objects, supported to match Sequelize
 [options] | String | Options object. Most default Sequelize options are ignored unless listed below. All, however, are available by accessing `sequelize.options`
 [options.dialect='mock'] | String | Dialect that the system will use. Avaible to be returned by `getDialect()` but has no other effect
+[options.autoQueryFallback] | Boolean | Flag inherited by defined Models indicating if we should try and generate results based on the query automatically
+[options.stopPropagation] | Boolean | Flag inherited by defined Models indicating if we should not propagate to the parent
 
 
 
