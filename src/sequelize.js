@@ -27,6 +27,8 @@ var _ = require('lodash'),
  * @param {String} [password] Ignored for Mock objects, supported to match Sequelize
  * @param {String} [options] Options object. Most default Sequelize options are ignored unless listed below. All, however, are available by accessing `sequelize.options`
  * @param {String} [options.dialect='mock'] Dialect that the system will use. Avaible to be returned by `getDialect()` but has no other effect
+ * @param {Boolean} [options.autoQueryFallback] Flag inherited by defined Models indicating if we should try and generate results based on the query automatically
+ * @param {Boolean} [options.stopPropagation] Flag inherited by defined Models indicating if we should not propagate to the parent
  **/
 function Sequelize(database, username, password, options) {
 	if(typeof database == 'object') {
@@ -37,7 +39,7 @@ function Sequelize(database, username, password, options) {
 		options = password;
 	}
 	
-	this.queryInterface = new QueryInterface();
+	this.queryInterface = new QueryInterface( _.pick(options || {}, ['stopPropagation']) );
 	
 	/**
 	 * Options passed into the Sequelize initialization
