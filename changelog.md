@@ -1,6 +1,6 @@
 # Changelog
 
-v0.8.0 - May 18th 2017
+v0.8.0 - 60397ec - May 18th 2017
   * Add `$queueResult()`, `$queueFailure()`, and `$clearQueue()` test methods to `Sequelize` and `Model` objects
   * Add `QueryInterface` object to support test result mocking
   * Add `getQueryInterface()` to Sequelize instances which will get the associated `QueryInterface` object
