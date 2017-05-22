@@ -555,19 +555,19 @@ fakeModel.prototype.belongsTo = fakeModel.prototype.hasOne = function (item, opt
 		noop = function () { return Promise.resolve(self); };
 	
 	if(isString) {
-		this._functions['get' + singular] = function (opts) { return Promise.resolve(new self.Instance(opts && opts.where ? opts.where : opts)); };
+		this.Instance.prototype['get' + singular] = function (opts) { return Promise.resolve(new self.Instance(opts && opts.where ? opts.where : opts)); };
 	} else {
-		this._functions['get' + singular] = item.findOne.bind(item);
+		this.Instance.prototype['get' + singular] = item.findOne.bind(item);
 	}
-	this._functions['set' + singular] = noop;
-	this._functions['create' + singular] = item.create ? item.create.bind(item) : noop;
+	this.Instance.prototype['set' + singular] = noop;
+	this.Instance.prototype['create' + singular] = item.create ? item.create.bind(item) : noop;
 };
 
 fakeModel.prototype.belongsToMany = fakeModel.prototype.hasMany = function (item, options) {
 	if(!(item instanceof fakeModel)) {
 		return {
 			through: {
-				model: new fakeModel()
+				model: new fakeModel(this.getTableName() + (item && item.name ? item.name : 'Association'), {}, { hasPrimaryKeys: false })
 			}
 		};
 	}
@@ -593,23 +593,23 @@ fakeModel.prototype.belongsToMany = fakeModel.prototype.hasMany = function (item
 		noop = function () { return Promise.resolve(self); };
 	
 	if(isString) {
-		this._functions['get' + plural] = function (opts) { return Promise.resolve([new self.Instance(opts && opts.where ? opts.where : opts)]); };
+		this.Instance.prototype['get' + plural] = function (opts) { return Promise.resolve([new self.Instance(opts && opts.where ? opts.where : opts)]); };
 	} else {
-		this._functions['get' + plural] = item.findAll.bind(item);
+		this.Instance.prototype['get' + plural] = item.findAll.bind(item);
 	}
-	this._functions['set' + plural] = noop;
-	this._functions['add' + singular] = noop;
-	this._functions['add' + plural] = noop;
-	this._functions['create' + singular] = item.create ? item.create.bind(item) : noop;
-	this._functions['remove' + singular] = noop;
-	this._functions['remove' + plural] = noop;
-	this._functions['has' + singular] = function () { return Promise.resolve(false); };
-	this._functions['has' + plural] = function () { return Promise.resolve(false); };
-	this._functions['count' + plural] = function () { return Promise.resolve(0); };
+	this.Instance.prototype['set' + plural] = noop;
+	this.Instance.prototype['add' + singular] = noop;
+	this.Instance.prototype['add' + plural] = noop;
+	this.Instance.prototype['create' + singular] = item.create ? item.create.bind(item) : noop;
+	this.Instance.prototype['remove' + singular] = noop;
+	this.Instance.prototype['remove' + plural] = noop;
+	this.Instance.prototype['has' + singular] = function () { return Promise.resolve(false); };
+	this.Instance.prototype['has' + plural] = function () { return Promise.resolve(false); };
+	this.Instance.prototype['count' + plural] = function () { return Promise.resolve(0); };
 	
 	return {
 		through: {
-			model: new fakeModel()
+			model: new fakeModel( this.getTableName() + plural, {}, { hasPrimaryKeys: false } )
 		}
 	};
 };

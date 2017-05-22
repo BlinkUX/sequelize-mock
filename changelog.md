@@ -1,5 +1,8 @@
 # Changelog
 
+vNext
+  * Fix creating Associations throws an error (issue #10)
+
 v0.8.0 - 60397ec - May 18th 2017
   * Add `$queueResult()`, `$queueFailure()`, and `$clearQueue()` test methods to `Sequelize` and `Model` objects
   * Add `QueryInterface` object to support test result mocking
