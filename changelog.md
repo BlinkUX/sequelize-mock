@@ -1,6 +1,6 @@
 # Changelog
 
-vNext
+v0.8.1 - May 22nd 2017
   * Fix creating Associations throws an error (issue #10)
 
 v0.8.0 - 60397ec - May 18th 2017
