@@ -20,7 +20,7 @@ var dbMock = new SequelizeMock();
 
 ## Creating Mock Objects
 
-Once you've installed the module, you can include it in your test code and define you Mock objects. Mock objects are defined with `db.define([tablename, ] defaultValues, options)`.
+Once you've installed the module, you can include it in your test code and define your Mock objects. Mock objects are defined with `db.define([tablename, ] defaultValues, options)`.
 
 ```javascript
 var UserMock = dbMock.define('user', {
@@ -38,7 +38,7 @@ var UserMock = dbMock.define('user', {
 
 ## Swapping Model for Mocks
 
-There are a number of libraries out there that can be used to replace `require()` dependencies with mock objects. You can simply use one of these libraries to replace the Sequelize Mock object into your code and it should run exactly as you would expect
+There are a number of libraries out there that can be used to replace `require()` dependencies with mock objects. You can simply use one of these libraries to replace the Sequelize Mock object into your code and it should run exactly as you would expect.
 
 Here is an example of doing so with [proxyquire](https://www.npmjs.com/package/proxyquire)
 
