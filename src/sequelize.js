@@ -39,7 +39,7 @@ function Sequelize(database, username, password, options) {
 		options = password;
 	}
 	
-	this.queryInterface = new QueryInterface( _.pick(options || {}, ['stopPropagation']) );
+	this.queryInterface = new QueryInterface( _.pick(options || {}, ['autoQueryFallback', 'stopPropagation']) );
 	
 	/**
 	 * Options passed into the Sequelize initialization
