@@ -197,9 +197,12 @@ fakeModelInstance.prototype.set = function(key, val) {
  * @return {Any|Object} either the value of the key, or all the values if there is no key
  **/
 fakeModelInstance.prototype.get = function (key) {
-	if(key)
+	if(!key || key.plain) {
+		return _.clone(this._values);
+	}
+	else {
 		return this._values[key];
-	return _.clone(this._values);
+	}
 };
 
 /**

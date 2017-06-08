@@ -145,6 +145,21 @@ describe('Instance', function () {
 			
 			inst.get('foo').should.be.exactly('bar');
 		});
+
+		it('should get the entire object if no paramater is provided', function () {
+			var inst = new Instance();
+			inst._values.foo = 'bar';
+			
+			inst.get().should.be.eql({foo: 'bar'});
+		});
+
+
+		it('should get the entire object if {plain: true} is passed', function () {
+			var inst = new Instance();
+			inst._values.foo = 'bar';
+			
+			inst.get().should.be.eql({foo: 'bar'});
+		});
 	});
 	
 	describe('#validate', function () {
