@@ -194,7 +194,7 @@ fakeModelInstance.prototype.set = function(key, val) {
  * 
  * @instance
  * @param {String|Object} [key] Key to get the value for
- * @return {Any|Object} either the value of the key, or all the values if there is no key
+ * @return {Any|Object} either the value of the key, or all the values if there is no key or key is an object with plain set to true: {plain: true}
  **/
 fakeModelInstance.prototype.get = function (key) {
 	if(!key || key.plain) {
