@@ -247,7 +247,8 @@ fakeModelInstance.prototype.save = function () {
 	return this.validate().then(function (err) {
 		if(err)
 			throw err;
-		
+		self.options.isNewRecord = false;
+		self.isNewRecord = false;
 		return self;
 	});
 };
