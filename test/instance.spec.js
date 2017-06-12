@@ -216,9 +216,11 @@ describe('Instance', function () {
 		it('should remove the flag for new records', function (done) {
 			var inst = new Instance();
 			inst.options.isNewRecord = true;
+			inst.isNewRecord = true;
 
 			inst.save().then(function (passedIn) {
 				passedIn.options.should.have.property('isNewRecord').which.is.exactly(false);
+				passedIn.should.have.property('isNewRecord').which.is.exactly(false);
 				done();
 			}).catch(done);
 		});

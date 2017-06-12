@@ -245,6 +245,7 @@ fakeModelInstance.prototype.save = function () {
 		if(err)
 			throw err;
 		self.options.isNewRecord = false;
+		self.isNewRecord = false;
 		return self;
 	});
 };
