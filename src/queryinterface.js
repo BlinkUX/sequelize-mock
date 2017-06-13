@@ -44,6 +44,7 @@ function QueryInterface (options) {
 		fallbackFn: undefined,
 	}, options || {});
 	this._results = [];
+	this._handlers = [];
 }
 
 /**
@@ -96,6 +97,20 @@ QueryInterface.prototype.$queueFailure = function (error, options) {
 QueryInterface.prototype.$queueError = QueryInterface.prototype.$queueFailure;
 
 /**
+ * Queue a new query handler from the mock database
+ *
+ * @instance
+ * @param {Function} handler The function that will be invoked with the query. It will receive the options used in the query as the first argument.
+ * @param {Object} [options] Options used when handling a query
+ * @param {Boolean} [options.limit] Optional value that specifies how many queries this handler should handle. 1 by default (i.e. the handler will be deleted after answering 1 query)
+ * @return {QueryInterface} self
+ **/
+QueryInterface.prototype.$queueHandler = function (handler) {
+	this._handlers.push(handler);
+	return this;
+};
+
+/**
  * Clears any queued query results
  * 
  * @instance
@@ -106,8 +121,14 @@ QueryInterface.prototype.$queueError = QueryInterface.prototype.$queueFailure;
  **/
 QueryInterface.prototype.$clearQueue = function (options) {
 	options = options || {};
-	this._results = [];
-	
+
+	if (options.clearResults !== false) {
+		this._results = [];
+	}
+	if (options.clearHandlers !== false) {
+		this._handlers = [];
+	}
+
 	// If we should also clear any results that would be added through propagation
 	// then we also need to trigger $clearQueue on any parent QueryInterface
 	if(options.propagateClear && this.options.parent) {
@@ -118,41 +139,26 @@ QueryInterface.prototype.$clearQueue = function (options) {
 };
 QueryInterface.prototype.$queueClear = QueryInterface.prototype.$clearQueue;
 
-/**
- * This is the mock method for getting results from the `QueryInterface`. This function
- * will get the next result in the queue and return that wrapped in a promise.
- * 
- * @instance
- * @param {Object} [options] Options used for this query
- * @param {Function} [options.fallbackFn] A fallback function to run if there are no results queued
- * @param {Boolean} [options.includeCreated] Flag indicating if a `created` value should be returned with the result for this query. Defaults to false
- * @param {Boolean} [options.includeAffectedRows] Flag indicating if the query expects `affectedRows` in the returned result parameters. Defautls to false
- * @param {Boolean} [options.stopPropagation] Flag indicating if result queue propagation should be stopped on this query. Defaults to false
- * @return {Promise} resolved or rejected promise from the next item in the review queue
- **/
-QueryInterface.prototype.$query = function (options) {
-	options = options || {};
-	
-	var fallbackFn = options.fallbackFn || this.options.fallbackFn;
-	
-	if(this._results.length) {
-		var result = this._results.shift();
-		
+function resultsQueueHandler(qi, options) {
+	return function(query, done) {
+		var result = qi._results.shift();
+		if (!result) return done();
+
 		if(typeof result !== 'object' || !(result.type === 'Failure' || result.type === 'Success')) {
 			throw new Errors.InvalidQueryResultError();
 		}
 		
 		if(result.type == 'Failure') {
-			return bluebird.reject(result.content);
+			return done(bluebird.reject(result.content));
 		}
 		
 		if(options.includeCreated) {
-			var created = !!this.options.createdDefault;
+			var created = !!qi.options.createdDefault;
 			if(typeof result.options.wasCreated !== 'undefined') {
 				created = !!result.options.wasCreated;
 			}
 			
-			return bluebird.resolve([result.content, created]);
+			return done(bluebird.resolve([result.content, created]));
 		}
 		if (options.includeAffectedRows) {
 			var affectedRows = [];
@@ -160,17 +166,69 @@ QueryInterface.prototype.$query = function (options) {
 				affectedRows = result.options.affectedRows;
 			}
 			
-			return bluebird.resolve([result.content, affectedRows]);
+			return done(bluebird.resolve([result.content, affectedRows]));
 		}
-		return bluebird.resolve(result.content);
-		
-	} else if (!options.stopPropagation && !this.options.stopPropagation && this.options.parent) {
-		return this.options.parent.$query(options);
-	} else if (fallbackFn){
-		return fallbackFn();
-	} else {
-		throw new Errors.EmptyQueryQueueError();
+		return done(bluebird.resolve(result.content));
 	}
+}
+
+function propagationHandler(qi, options) {
+	return function(query, done) {
+		if (!options.stopPropagation && !qi.options.stopPropagation && qi.options.parent) {
+			return done(qi.options.parent.$query(options));
+		} else {
+			return done();
+		}
+	}
+}
+
+function fallbackHandler(qi, options) {
+	return function(query, done) {
+		var fallbackFn = options.fallbackFn || qi.options.fallbackFn;
+		if (fallbackFn) return done(fallbackFn());
+		else return done();
+	}
+}
+
+/**
+ * This is the mock method for getting results from the `QueryInterface`. This function
+ * will get the next result in the queue and return that wrapped in a promise.
+ *
+ * @instance
+ * @param {Object} [options] Options used for this query
+ * @param {Function} [options.fallbackFn] A fallback function to run if there are no results queued
+ * @param {Boolean} [options.includeCreated] Flag indicating if a `created` value should be returned with the result for this query. Defaults to false
+ * @param {Boolean} [options.includeAffectedRows] Flag indicating if the query expects `affectedRows` in the returned result parameters. Defautls to false
+ * @param {Boolean} [options.stopPropagation] Flag indicating if result queue propagation should be stopped on this query. Defaults to false
+ * @param {String} [options.method] Name of the original query: "findOne", "findOrCreate", "upsert", etc.
+ * @param {String} [options.options] Options passed to the original query method
+ * @return {Promise} resolved or rejected promise from the next item in the review queue
+ **/
+QueryInterface.prototype.$query = function (options) {
+	options = options || {};
+
+	var handlers = this._handlers.concat(
+		resultsQueueHandler(this, options),
+		propagationHandler(this, options),
+		fallbackHandler(this, options),
+		function() {
+			throw new Errors.EmptyQueryQueueError();
+		}
+	)
+	
+	// Can't use promises to chain the handlers because they will convert any error thrown by the handlers to a rejected promise.
+	var result;
+	function processHandler(handler) {
+		if (!handler) return;
+		handler(options.query, options.options, function() {
+			if (arguments.length>0) result = arguments[0];
+			else processHandler(handlers.shift());
+		})
+	}
+	processHandler(handlers.shift());
+
+	// Always convert the result to a promise. If the promise was rejected, this method will return a rejected promise.
+	return bluebird.resolve(result);
 };
 
 module.exports = QueryInterface;

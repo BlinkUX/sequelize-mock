@@ -125,6 +125,28 @@ describe('QueryInterface', function () {
 		});
 	});
 	
+	describe('#$queueHandler', function () {
+		var qi;
+		beforeEach(function () {
+			qi = new QueryInterface({});
+		});
+		
+		it('should queue the handler as the next item in the handlers list', function () {
+			qi._handlers.length.should.equal(0);
+			var handler1 = function(){};
+			var handler2 = function(){};
+
+			qi.$queueHandler(handler1);
+			qi._handlers.length.should.equal(1);
+			qi._handlers[0].should.equal(handler1);
+			
+			qi.$queueHandler(handler2);
+			qi._handlers.length.should.equal(2);
+			qi._handlers[0].should.equal(handler1);
+			qi._handlers[1].should.equal(handler2);
+		});
+	});
+	
 	describe('#$clearQueue', function () {
 		var qi;
 		beforeEach(function () {
@@ -133,8 +155,16 @@ describe('QueryInterface', function () {
 		
 		it('should clear the results queue from the current QueryInterface', function () {
 			qi._results = [1, 2, 3];
+			qi._handlers = [
+				function(){},
+				function(){},
+				function(){},
+			];
+
 			qi.$clearQueue();
+
 			qi._results.length.should.equal(0);
+			qi._handlers.length.should.equal(0);
 		});
 		
 		it('should not clear the results queue from a parent QueryInterface by default', function () {
@@ -161,6 +191,30 @@ describe('QueryInterface', function () {
 			qi.$clearQueue({ propagateClear: true });
 			qi._results.length.should.equal(0);
 			run.should.equal(1);
+		});
+
+		it('should not clear the results queue if option is passed in', function () {
+			qi._results = [1, 2, 3];
+			
+			qi.$clearQueue({
+				clearResults: false
+			});
+			
+			qi._results.length.should.equal(3);
+		});
+
+		it('should not clear the handlers queue if option is passed in', function () {
+			qi._handlers = [
+				function(){},
+				function(){},
+				function(){},
+			];
+			
+			qi.$clearQueue({
+				clearHandlers: false
+			});
+			
+			qi._handlers.length.should.equal(3);
 		});
 		
 	});
@@ -331,15 +385,18 @@ describe('QueryInterface', function () {
 				qi = new QueryInterface();
 			});
 			
-			it('should default to calling into parent queue if a parent exists', function () {
+			it('should default to calling into parent queue if a parent exists', function (done) {
 				var run = 0;
 				qi._results = [];
 				qi.options.parent = {
 					$query: function () { run++; return 'foo'; }
 				};
 				
-				qi.$query().should.equal('foo');
-				run.should.equal(1);
+				qi.$query().then(function (content) {
+					content.should.equal('foo');
+					run.should.equal(1);
+					done();
+				}).catch(done);
 			});
 			
 			it('should not call into parent if QueryInterface option is to stopPropagation', function () {
@@ -379,22 +436,28 @@ describe('QueryInterface', function () {
 				qi = new QueryInterface();
 			});
 			
-			it('should call fallback function if it exists on the QueryInterface', function () {
+			it('should call fallback function if it exists on the QueryInterface', function (done) {
 				var run = 0;
 				qi._results = [];
 				qi.options.fallbackFn = function () { run++; return 'foo'; };
 				
-				qi.$query().should.equal('foo');
-				run.should.equal(1);
+				qi.$query().then(function (content) {
+					content.should.equal('foo');
+					run.should.equal(1);
+					done();
+				}).catch(done);
 			});
 			
-			it('should call fallback function on query options if it exists', function () {
+			it('should call fallback function on query options if it exists', function (done) {
 				var run = 0;
 				qi._results = [];
 				qi.options.fallbackFn = function () { run++; return 'foo'; };
 				
-				qi.$query({ fallbackFn: function () { run++; return 'bar'; } }).should.equal('bar');
-				run.should.equal(1);
+				qi.$query({ fallbackFn: function () { run++; return 'bar'; } }).then(function (content) {
+					content.should.equal('bar');
+					run.should.equal(1);
+					done();
+				}).catch(done);
 			});
 			
 		});
