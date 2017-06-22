@@ -1,5 +1,9 @@
 # Changelog
 
+vNext
+  * Add support for `instance.get({ plain: true })` (thanks to @fredstrange)
+  * Fix setting `isNewRecord` on instances to false after saving (issue #19; thanks to @scinos)
+
 v0.8.1 - c2527de - May 22nd 2017
   * Fix creating Associations throws an error (issue #10)
 
