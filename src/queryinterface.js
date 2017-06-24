@@ -97,15 +97,13 @@ QueryInterface.prototype.$queueFailure = function (error, options) {
 QueryInterface.prototype.$queueError = QueryInterface.prototype.$queueFailure;
 
 /**
- * Queue a new query handler from the mock database
- *
+ * Adds a new query handler from the mock database
+ * 
  * @instance
- * @param {Function} handler The function that will be invoked with the query. It will receive the options used in the query as the first argument.
- * @param {Object} [options] Options used when handling a query
- * @param {Boolean} [options.limit] Optional value that specifies how many queries this handler should handle. 1 by default (i.e. the handler will be deleted after answering 1 query)
+ * @param {Function} handler The function that will be invoked with the query.
  * @return {QueryInterface} self
  **/
-QueryInterface.prototype.$queueHandler = function (handler) {
+QueryInterface.prototype.$useHandler = function (handler) {
 	this._handlers.push(handler);
 	return this;
 };

@@ -125,22 +125,22 @@ describe('QueryInterface', function () {
 		});
 	});
 	
-	describe('#$queueHandler', function () {
+	describe('#$useHandler', function () {
 		var qi;
 		beforeEach(function () {
 			qi = new QueryInterface({});
 		});
 		
-		it('should queue the handler as the next item in the handlers list', function () {
+		it('should add the handler as the next item in the handlers list', function () {
 			qi._handlers.length.should.equal(0);
 			var handler1 = function(){};
 			var handler2 = function(){};
 
-			qi.$queueHandler(handler1);
+			qi.$useHandler(handler1);
 			qi._handlers.length.should.equal(1);
 			qi._handlers[0].should.equal(handler1);
 			
-			qi.$queueHandler(handler2);
+			qi.$useHandler(handler2);
 			qi._handlers.length.should.equal(2);
 			qi._handlers[0].should.equal(handler1);
 			qi._handlers[1].should.equal(handler2);
@@ -527,5 +527,4 @@ describe('QueryInterface', function () {
 		});
 		
 	});
-	
 });
