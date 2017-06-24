@@ -173,7 +173,7 @@ QueryInterface.prototype.$clearResults = function (options) {
 QueryInterface.prototype.$resultsClear = QueryInterface.prototype.$clearResults;
 
 function resultsQueueHandler(qi, options) {
-	return function(query, done) {
+	return function(query, queryOptions, done) {
 		var result = qi._results.shift();
 		if (!result) return done();
 
@@ -206,7 +206,7 @@ function resultsQueueHandler(qi, options) {
 }
 
 function propagationHandler(qi, options) {
-	return function(query, done) {
+	return function(query, queryOptions, done) {
 		if (!options.stopPropagation && !qi.options.stopPropagation && qi.options.parent) {
 			return done(qi.options.parent.$query(options));
 		} else {
@@ -216,7 +216,7 @@ function propagationHandler(qi, options) {
 }
 
 function fallbackHandler(qi, options) {
-	return function(query, done) {
+	return function(query, queryOptions, done) {
 		var fallbackFn = options.fallbackFn || qi.options.fallbackFn;
 		if (fallbackFn) return done(fallbackFn());
 		else return done();
@@ -233,8 +233,8 @@ function fallbackHandler(qi, options) {
  * @param {Boolean} [options.includeCreated] Flag indicating if a `created` value should be returned with the result for this query. Defaults to false
  * @param {Boolean} [options.includeAffectedRows] Flag indicating if the query expects `affectedRows` in the returned result parameters. Defautls to false
  * @param {Boolean} [options.stopPropagation] Flag indicating if result queue propagation should be stopped on this query. Defaults to false
- * @param {String} [options.method] Name of the original query: "findOne", "findOrCreate", "upsert", etc.
- * @param {String} [options.options] Options passed to the original query method
+ * @param {String} [options.query] Name of the original query: "findOne", "findOrCreate", "upsert", etc.
+ * @param {Object} [options.queryOptions] Options passed to the original query method
  * @return {Promise} resolved or rejected promise from the next item in the review queue
  **/
 QueryInterface.prototype.$query = function (options) {
@@ -253,7 +253,7 @@ QueryInterface.prototype.$query = function (options) {
 	var result;
 	function processHandler(handler) {
 		if (!handler) return;
-		handler(options.query, options.options, function() {
+		handler(options.query, options.queryOptions, function() {
 			if (arguments.length>0) result = arguments[0];
 			else processHandler(handlers.shift());
 		})
