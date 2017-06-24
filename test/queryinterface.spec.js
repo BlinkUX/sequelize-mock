@@ -334,6 +334,72 @@ describe('QueryInterface', function () {
 			should.throws(qi.$query.bind(qi), ErrorsMock.InvalidQueryResultError);
 		});
 		
+		it('should pass the query information to the handlers', function(done) {
+			qi.$useHandler(function(query, options) {
+				query.should.equal('findAll');
+				options.should.deepEqual({ where: {id: 1}});
+				done();
+			});
+			qi.$query({
+				query: 'findAll',
+				queryOptions: { where: {id: 1}}
+			})
+		});
+		
+		it('should return the promise of the handler', function(done) {
+			qi.$useHandler(function(query, options, handlerDone) {
+				handlerDone(bluebird.resolve('handler value'));
+			});
+			qi.$query().then(function(value) {
+				value.should.equal('handler value');
+				done();
+			});
+		});
+
+		it('should respect rejected promises returned from handler', function(done) {
+			qi.$useHandler(function(query, options, handlerDone) {
+				handlerDone(bluebird.reject('error'));
+			});
+			qi.$query().catch(function(error) {
+				error.should.equal('error');
+				done();
+			});
+		});
+		
+		it('should convert regular values from the handler to resolved promises', function(done) {
+			qi.$useHandler(function(query, options, handlerDone) {
+				handlerDone('regular value');
+			});
+			qi.$query().then(function(value) {
+				value.should.equal('regular value');
+				done();
+			});
+		});
+		
+		it('should call next handler in the chain if the handler does not return a value', function(done) {
+			var handler1 = false;
+			var handler2 = false;
+			
+			qi.$useHandler(function(query, options, handlerDone) {
+				handler1=true;
+				handlerDone();
+			});
+			qi.$useHandler(function(query, options, handlerDone) {
+				handler2=true;
+				handlerDone();
+			});
+			qi.$useHandler(function(query, options, handlerDone) {
+				handlerDone('called');
+			});
+			
+			qi.$query().then(function(value) {
+				value.should.equal('called');
+				handler1.should.be.true();
+				handler2.should.be.true();
+				done();
+			});
+		});
+		
 		describe('[options.includeCreated]', function () {
 			var qi;
 			beforeEach(function () {
