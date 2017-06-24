@@ -121,13 +121,7 @@ QueryInterface.prototype.$queueHandler = function (handler) {
  **/
 QueryInterface.prototype.$clearQueue = function (options) {
 	options = options || {};
-
-	if (options.clearResults !== false) {
-		this._results = [];
-	}
-	if (options.clearHandlers !== false) {
-		this._handlers = [];
-	}
+	this._results = [];
 
 	// If we should also clear any results that would be added through propagation
 	// then we also need to trigger $clearQueue on any parent QueryInterface
@@ -138,6 +132,45 @@ QueryInterface.prototype.$clearQueue = function (options) {
 	return this;
 };
 QueryInterface.prototype.$queueClear = QueryInterface.prototype.$clearQueue;
+
+/**
+ * Clears any handles
+ * 
+ * @instance
+ * @alias $handlersClear
+ * @param {Object} [options] Options used when returning the result
+ * @param {Boolean} [options.propagateClear] Propagate this clear up to any parent `QueryInterface`s. Defaults to false
+ * @return {QueryInterface} self
+ **/
+QueryInterface.prototype.$clearHandlers = function (options) {
+	options = options || {};
+	this._handlers = [];
+
+	// If we should also clear any handlers that would be added through propagation
+	// then we also need to trigger $clearQueue on any parent QueryInterface
+	if(options.propagateClear && this.options.parent) {
+		this.options.parent.$clearHandlers(options);
+	}
+	
+	return this;
+};
+QueryInterface.prototype.$handlersClear = QueryInterface.prototype.$clearHandlers;
+
+/**
+ * Clears any reesults (both handlers and queued results)
+ * 
+ * @instance
+ * @alias $handlersClear
+ * @param {Object} [options] Options used when returning the result
+ * @param {Boolean} [options.propagateClear] Propagate this clear up to any parent `QueryInterface`s. Defaults to false
+ * @return {QueryInterface} self
+ **/
+QueryInterface.prototype.$clearResults = function (options) {
+	this.$clearHandlers(options);
+	this.$clearQueue(options);
+	return this;
+};
+QueryInterface.prototype.$resultsClear = QueryInterface.prototype.$clearResults;
 
 function resultsQueueHandler(qi, options) {
 	return function(query, done) {

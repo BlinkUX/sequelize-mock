@@ -155,16 +155,8 @@ describe('QueryInterface', function () {
 		
 		it('should clear the results queue from the current QueryInterface', function () {
 			qi._results = [1, 2, 3];
-			qi._handlers = [
-				function(){},
-				function(){},
-				function(){},
-			];
-
 			qi.$clearQueue();
-
 			qi._results.length.should.equal(0);
-			qi._handlers.length.should.equal(0);
 		});
 		
 		it('should not clear the results queue from a parent QueryInterface by default', function () {
@@ -192,29 +184,96 @@ describe('QueryInterface', function () {
 			qi._results.length.should.equal(0);
 			run.should.equal(1);
 		});
-
-		it('should not clear the results queue if option is passed in', function () {
-			qi._results = [1, 2, 3];
-			
-			qi.$clearQueue({
-				clearResults: false
-			});
-			
-			qi._results.length.should.equal(3);
+		
+	});
+	
+	describe('#$clearHandlers', function () {
+		var qi;
+		beforeEach(function () {
+			qi = new QueryInterface({});
 		});
+		
+		it('should clear the handlers from the current QueryInterface', function () {
+			qi._handlers = [function(){}, function(){}];
+			
+			qi.$clearHandlers();
+			
+			qi._handlers.length.should.equal(0);
+		});
+		
+		it('should not clear the handlers from a parent QueryInterface by default', function () {
+			qi._handlers = [function(){}, function(){}];
+			
+			var run = 0;
+			qi.options.parent = {
+				$clearHandlers: function () { run++; },
+			};
+			
+			qi.$clearHandlers();
+			qi._handlers.length.should.equal(0);
+			run.should.equal(0);
+		});
+		
+		it('should clear the handlers from a parent QueryInterface if option is passed in to', function () {
+			qi._handlers = [function(){}, function(){}];
+			
+			var run = 0;
+			qi.options.parent = {
+				$clearHandlers: function () { run++; },
+			};
+			
+			qi.$clearHandlers({ propagateClear: true });
+			qi._results.length.should.equal(0);
+			run.should.equal(1);
+		});
+		
+	});
+		
+	describe('#$clearResults', function () {
+		var qi;
+		beforeEach(function () {
+			qi = new QueryInterface({});
+		});
+		
+		it('should clear the handlers and results queue from the current QueryInterface', function () {
+			qi._results = [1, 2, 3];
+			qi._handlers = [function(){}, function(){}];
+			
+			qi.$clearResults();
+			
+			qi._results.length.should.equal(0);
+			qi._handlers.length.should.equal(0);
+		});
+		
+		it('should not clear the handlers and results queue from a parent QueryInterface by default', function () {
+			qi._results = [1, 2, 3];
+			qi._handlers = [function(){}, function(){}];
+			
+			var run = 0;
+			qi.options.parent = {
+				$clearResults: function () { run++; },
+			};
+			
+			qi.$clearResults();
+			qi._results.length.should.equal(0);
+			qi._handlers.length.should.equal(0);
+			run.should.equal(0);
+		});
+		
+		it('should clear the handlers and results queue from a parent QueryInterface if option is passed in to', function () {
+			qi._results = [1, 2, 3];
+			qi._handlers = [function(){}, function(){}];
 
-		it('should not clear the handlers queue if option is passed in', function () {
-			qi._handlers = [
-				function(){},
-				function(){},
-				function(){},
-			];
+			var run = 0;
+			qi.options.parent = {
+				$clearHandlers: function () { run++; },
+				$clearQueue: function () { run++; },
+			};
 			
-			qi.$clearQueue({
-				clearHandlers: false
-			});
-			
-			qi._handlers.length.should.equal(3);
+			qi.$clearResults({ propagateClear: true });
+			qi._results.length.should.equal(0);
+			qi._handlers.length.should.equal(0);
+			run.should.equal(2);
 		});
 		
 	});
