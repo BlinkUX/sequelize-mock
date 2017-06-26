@@ -400,6 +400,49 @@ describe('QueryInterface', function () {
 			});
 		});
 		
+		it('should not call next handler in the chain if a handler returns a value', function(done) {
+			var handler1 = false;
+			var handler2 = false;
+			var handler3 = false;
+			
+			qi.$useHandler(function(query, options, handlerDone) {
+				handler1=true;
+				handlerDone();
+			});
+			qi.$useHandler(function(query, options, handlerDone) {
+				handler2=true;
+				handlerDone('called');
+			});
+			qi.$useHandler(function(query, options, handlerDone) {
+				handler3=true;
+				handlerDone();
+			});
+			
+			qi.$query().then(function(value) {
+				value.should.equal('called');
+				handler1.should.be.true();
+				handler2.should.be.true();
+				handler3.should.be.false();
+				done();
+			});
+		});
+		
+		it('should fall back to results queue if the handlers do not return values', function(done) {
+			var handler1 = false;
+			
+			qi.$useHandler(function(query, options, handlerDone) {
+				handler1=true;
+				handlerDone();
+			});
+			qi.$queueResult('foo');
+			
+			qi.$query().then(function(value) {
+				value.should.equal('foo');
+				handler1.should.be.true();
+				done();
+			});
+		});
+		
 		describe('[options.includeCreated]', function () {
 			var qi;
 			beforeEach(function () {
