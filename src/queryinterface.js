@@ -232,7 +232,7 @@ function fallbackHandler(qi, options) {
  * @param {Boolean} [options.includeAffectedRows] Flag indicating if the query expects `affectedRows` in the returned result parameters. Defautls to false
  * @param {Boolean} [options.stopPropagation] Flag indicating if result queue propagation should be stopped on this query. Defaults to false
  * @param {String} [options.query] Name of the original query: "findOne", "findOrCreate", "upsert", etc.
- * @param {Object} [options.queryOptions] Options passed to the original query method
+ * @param {Object} [options.queryOptions] Array with the arguments passed to the original query method
  * @return {Promise} resolved or rejected promise from the next item in the review queue
  **/
 QueryInterface.prototype.$query = function (options) {
