@@ -269,6 +269,8 @@ fakeModel.prototype.findAll =  function (options) {
 	var self = this;
 	
 	return this.$query({
+		query: "findAll",
+		queryOptions: arguments,
 		fallbackFn: !this.options.autoQueryFallback ? null : function () {
 			return Promise.resolve([ self.build(options ? options.where : {}) ]);
 		},
@@ -291,6 +293,8 @@ fakeModel.prototype.findById = function (id) {
 	var self = this;
 	
 	return this.$query({
+		query: "findById",
+		queryOptions: arguments,
 		fallbackFn: !this.options.autoQueryFallback ? null : function () {
 			return Promise.resolve( self.build({ id: id }) );
 		},
@@ -326,6 +330,8 @@ fakeModel.prototype.findOne = function (obj) {
 	var self = this;
 	
 	return this.$query({
+		query: "findOne",
+		queryOptions: arguments,
 		fallbackFn: !this.options.autoQueryFallback ? null : function () {
 			return Promise.resolve( self.build(obj ? obj.where : {}) );
 		},
@@ -368,6 +374,8 @@ fakeModel.prototype.sum = function (field) {
 	var self = this;
 	
 	return this.$query({
+		query: "sum",
+		queryOptions: arguments,
 		fallbackFn: !this.options.autoQueryFallback ? null : function () {
 			return Promise.resolve(self._defaults[field]);
 		},
@@ -430,6 +438,8 @@ fakeModel.prototype.findOrCreate = function (obj) {
 	var self = this;
 	
 	return this.$query({
+		query: "findOrCreate",
+		queryOptions: arguments,
 		includeCreated: true,
 		fallbackFn: !this.options.autoQueryFallback ? null : function () {
 			return self.build(obj.where).save().then(function (result) {
@@ -455,6 +465,8 @@ fakeModel.prototype.upsert = function (values) {
 	var self = this;
 	
 	return this.$query({
+		query: "upsert",
+		queryOptions: arguments,
 		fallbackFn: !this.options.autoQueryFallback ? null : function () {
 			return self.build(values).save().return(self.options.createdDefault);
 		},
@@ -475,6 +487,8 @@ fakeModel.prototype.bulkCreate = function (set, options) {
 	var self = this;
 	
 	return this.$query({
+		query: "bulkCreate",
+		queryOptions: arguments,
 		fallbackFn: !this.options.autoQueryFallback ? null : function () {
 			return Promise.all( _.map(set, self.create.bind(self)) );
 		},
@@ -495,6 +509,8 @@ fakeModel.prototype.destroy = function (options) {
 	var self = this;
 	
 	return this.$query({
+		query: "destroy",
+		queryOptions: arguments,
 		fallbackFn: !this.options.autoQueryFallback ? null : function () {
 			return Promise.resolve(options && typeof options.limit == 'number' ? options.limit : 1);
 		},
@@ -519,6 +535,9 @@ fakeModel.prototype.update = function (values, options) {
 	options = options || {};
 	
 	return this.$query({
+		query: "update",
+		queryOptions: arguments,
+		options: options,
 		includeAffectedRows: !!options.returning,
 		fallbackFn: !this.options.autoQueryFallback ? null : function () {
 			if(!options.returning) {

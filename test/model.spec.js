@@ -304,6 +304,20 @@ describe('Model', function () {
 			mdl.options.autoQueryFallback = false;
 			should.not.exist(mdl.update().fallbackFn);
 		});
+		
+		it('should pass query info to the QueryInterface instance', function(done) {
+			var vals = {};
+			var opts = {};
+			
+			mdl.$query = function(options) {
+				options.query.should.equal('update');
+				options.queryOptions.length.should.equal(2);
+				options.queryOptions[0].should.equal(vals);
+				options.queryOptions[1].should.equal(opts);
+				done();
+			}
+			mdl.update(vals, opts);
+		});
 	});
 	
 	describe('#findOne', function () {
@@ -339,6 +353,22 @@ describe('Model', function () {
 			mdl.options.autoQueryFallback = false;
 			should.not.exist(mdl.findOne().fallbackFn);
 		});
+		
+		it('should pass query info to the QueryInterface instance', function(done) {
+			var queryOptions = {
+				where: {
+					'foo': 'bar',
+				},
+			};
+			
+			mdl.$query = function(options) {
+				options.query.should.equal('findOne');
+				options.queryOptions.length.should.equal(1);
+				options.queryOptions[0].should.equal(queryOptions);
+				done();
+			}
+			mdl.findOne(queryOptions);
+		});
 	});
 	
 	describe('#findById', function () {
@@ -358,6 +388,16 @@ describe('Model', function () {
 		it('should not pass along a fallback function if auto fallback is turned off', function () {
 			mdl.options.autoQueryFallback = false;
 			should.not.exist(mdl.findById().fallbackFn);
+		});
+		
+		it('should pass query info to the QueryInterface instance', function(done) {
+			mdl.$query = function(options) {
+				options.query.should.equal('findById');
+				options.queryOptions.length.should.equal(1);
+				options.queryOptions[0].should.equal(123);
+				done();
+			}
+			mdl.findById(123);
 		});
 	});
 	
@@ -381,6 +421,18 @@ describe('Model', function () {
 			mdl.options.autoQueryFallback = false;
 			should.not.exist(mdl.sum().fallbackFn);
 		});
+		
+		it('should pass query info to the QueryInterface instance', function(done) {
+			var queryOptions = {};
+			
+			mdl.$query = function(options) {
+				options.query.should.equal('sum');
+				options.queryOptions.length.should.equal(1);
+				options.queryOptions[0].should.equal(queryOptions);
+				done();
+			}
+			mdl.sum(queryOptions);
+		});
 	});
 	
 	describe('#upsert', function () {
@@ -400,6 +452,18 @@ describe('Model', function () {
 		it('should not pass along a fallback function if auto fallback is turned off', function () {
 			mdl.options.autoQueryFallback = false;
 			should.not.exist(mdl.upsert().fallbackFn);
+		});
+		
+		it('should pass query info to the QueryInterface instance', function(done) {
+			var queryOptions = {};
+			
+			mdl.$query = function(options) {
+				options.query.should.equal('upsert');
+				options.queryOptions.length.should.equal(1);
+				options.queryOptions[0].should.equal(queryOptions);
+				done();
+			}
+			mdl.upsert(queryOptions);
 		});
 	});
 	
@@ -435,6 +499,18 @@ describe('Model', function () {
 			mdl.options.autoQueryFallback = false;
 			should.not.exist(mdl.findOrCreate().fallbackFn);
 		});
+		
+		it('should pass query info to the QueryInterface instance', function(done) {
+			var queryOptions = {};
+			
+			mdl.$query = function(options) {
+				options.query.should.equal('findOrCreate');
+				options.queryOptions.length.should.equal(1);
+				options.queryOptions[0].should.equal(queryOptions);
+				done();
+			}
+			mdl.findOrCreate(queryOptions);
+		});
 	});
 	
 	describe('#bulkCreate', function () {
@@ -465,6 +541,20 @@ describe('Model', function () {
 		it('should not pass along a fallback function if auto fallback is turned off', function () {
 			mdl.options.autoQueryFallback = false;
 			should.not.exist(mdl.bulkCreate().fallbackFn);
+		});
+		
+		it('should pass query info to the QueryInterface instance', function(done) {
+			var set = {};
+			var opt = {};
+			
+			mdl.$query = function(options) {
+				options.query.should.equal('bulkCreate');
+				options.queryOptions.length.should.equal(2);
+				options.queryOptions[0].should.equal(set);
+				options.queryOptions[1].should.equal(opt);
+				done();
+			}
+			mdl.bulkCreate(set, opt);
 		});
 	});
 	
@@ -501,6 +591,18 @@ describe('Model', function () {
 			mdl.options.autoQueryFallback = false;
 			should.not.exist(mdl.findAll().fallbackFn);
 		});
+		
+		it('should pass query info to the QueryInterface instance', function(done) {
+			var queryOptions = {};
+			
+			mdl.$query = function(options) {
+				options.query.should.equal('findAll');
+				options.queryOptions.length.should.equal(1);
+				options.queryOptions[0].should.equal(queryOptions);
+				done();
+			}
+			mdl.findAll(queryOptions)
+		});
 	});
 	
 	describe('#destroy', function () {
@@ -529,6 +631,18 @@ describe('Model', function () {
 		it('should not pass along a fallback function if auto fallback is turned off', function () {
 			mdl.options.autoQueryFallback = false;
 			should.not.exist(mdl.destroy().fallbackFn);
+		});
+		
+		it('should pass query info to the QueryInterface instance', function(done) {
+			var queryOptions = {};
+			
+			mdl.$query = function(options) {
+				options.query.should.equal('destroy');
+				options.queryOptions.length.should.equal(1);
+				options.queryOptions[0].should.equal(queryOptions);
+				done();
+			}
+			mdl.destroy(queryOptions);
 		});
 	});
 	
