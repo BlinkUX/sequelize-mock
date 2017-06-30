@@ -347,8 +347,8 @@ describe('QueryInterface', function () {
 		});
 		
 		it('should return the promise of the handler', function(done) {
-			qi.$useHandler(function(query, options, handlerDone) {
-				handlerDone(bluebird.resolve('handler value'));
+			qi.$useHandler(function(query, options) {
+				return bluebird.resolve('handler value');
 			});
 			qi.$query().then(function(value) {
 				value.should.equal('handler value');
@@ -357,8 +357,8 @@ describe('QueryInterface', function () {
 		});
 
 		it('should respect rejected promises returned from handler', function(done) {
-			qi.$useHandler(function(query, options, handlerDone) {
-				handlerDone(bluebird.reject('error'));
+			qi.$useHandler(function(query, options) {
+				return bluebird.reject('error');
 			});
 			qi.$query().catch(function(error) {
 				error.should.equal('error');
@@ -366,9 +366,44 @@ describe('QueryInterface', function () {
 			});
 		});
 		
+		it('should return a promise even if the value is undefined', function(done) {
+			qi.$useHandler(function(query, options) {
+				return bluebird.resolve(undefined);
+			});
+			qi.$query().then(function(value) {
+				(typeof target).should.be.equal('undefined');
+				done();
+			});
+		});
+				
+		it('should re-throw errors from the handler', function() {
+			var handler1 = false;
+			
+			qi.$useHandler(function(query, options) {
+				throw new Error('error');
+			});
+			
+			(function () {
+			  qi.$query()
+			}).should.throw(Error);
+		});
+		
+		it('should work with async handlers', function(done) {
+			qi.$useHandler(function(query, options) {
+				return new bluebird(function(resolve, reject) {
+					resolve('done');
+				});
+			});
+			
+			qi.$query().then(function(value) {
+				value.should.equal('done');
+				done();
+			});
+		});
+		
 		it('should convert regular values from the handler to resolved promises', function(done) {
-			qi.$useHandler(function(query, options, handlerDone) {
-				handlerDone('regular value');
+			qi.$useHandler(function(query, options) {
+				return 'regular value';
 			});
 			qi.$query().then(function(value) {
 				value.should.equal('regular value');
@@ -380,16 +415,14 @@ describe('QueryInterface', function () {
 			var handler1 = false;
 			var handler2 = false;
 			
-			qi.$useHandler(function(query, options, handlerDone) {
+			qi.$useHandler(function(query, options) {
 				handler1=true;
-				handlerDone();
 			});
-			qi.$useHandler(function(query, options, handlerDone) {
+			qi.$useHandler(function(query, options) {
 				handler2=true;
-				handlerDone();
 			});
-			qi.$useHandler(function(query, options, handlerDone) {
-				handlerDone('called');
+			qi.$useHandler(function(query, options) {
+				return 'called';
 			});
 			
 			qi.$query().then(function(value) {
@@ -405,17 +438,15 @@ describe('QueryInterface', function () {
 			var handler2 = false;
 			var handler3 = false;
 			
-			qi.$useHandler(function(query, options, handlerDone) {
+			qi.$useHandler(function(query, options) {
 				handler1=true;
-				handlerDone();
 			});
-			qi.$useHandler(function(query, options, handlerDone) {
+			qi.$useHandler(function(query, options) {
 				handler2=true;
-				handlerDone('called');
+				return 'called';
 			});
-			qi.$useHandler(function(query, options, handlerDone) {
+			qi.$useHandler(function(query, options) {
 				handler3=true;
-				handlerDone();
 			});
 			
 			qi.$query().then(function(value) {
@@ -430,15 +461,13 @@ describe('QueryInterface', function () {
 		it('should fall back to results queue if the handlers do not return values', function(done) {
 			var handler1 = false;
 			
-			qi.$useHandler(function(query, options, handlerDone) {
+			qi.$useHandler(function(query, options) {
 				handler1=true;
-				handlerDone();
 			});
 			qi.$queueResult('foo');
 			
 			qi.$query().then(function(value) {
 				value.should.equal('foo');
-				handler1.should.be.true();
 				done();
 			});
 		});

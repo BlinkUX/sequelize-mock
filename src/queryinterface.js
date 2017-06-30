@@ -171,16 +171,16 @@ QueryInterface.prototype.$clearResults = function (options) {
 QueryInterface.prototype.$resultsClear = QueryInterface.prototype.$clearResults;
 
 function resultsQueueHandler(qi, options) {
-	return function(query, queryOptions, done) {
+	return function(query, queryOptions) {
 		var result = qi._results.shift();
-		if (!result) return done();
+		if (!result) return;
 
 		if(typeof result !== 'object' || !(result.type === 'Failure' || result.type === 'Success')) {
 			throw new Errors.InvalidQueryResultError();
 		}
 		
 		if(result.type == 'Failure') {
-			return done(bluebird.reject(result.content));
+			return bluebird.reject(result.content);
 		}
 		
 		if(options.includeCreated) {
@@ -189,7 +189,7 @@ function resultsQueueHandler(qi, options) {
 				created = !!result.options.wasCreated;
 			}
 			
-			return done(bluebird.resolve([result.content, created]));
+			return bluebird.resolve([result.content, created]);
 		}
 		if (options.includeAffectedRows) {
 			var affectedRows = [];
@@ -197,27 +197,24 @@ function resultsQueueHandler(qi, options) {
 				affectedRows = result.options.affectedRows;
 			}
 			
-			return done(bluebird.resolve([result.content, affectedRows]));
+			return bluebird.resolve([result.content, affectedRows]);
 		}
-		return done(bluebird.resolve(result.content));
+		return bluebird.resolve(result.content);
 	}
 }
 
 function propagationHandler(qi, options) {
-	return function(query, queryOptions, done) {
+	return function(query, queryOptions) {
 		if (!options.stopPropagation && !qi.options.stopPropagation && qi.options.parent) {
-			return done(qi.options.parent.$query(options));
-		} else {
-			return done();
+			return qi.options.parent.$query(options);
 		}
 	}
 }
 
 function fallbackHandler(qi, options) {
-	return function(query, queryOptions, done) {
+	return function(query, queryOptions) {
 		var fallbackFn = options.fallbackFn || qi.options.fallbackFn;
-		if (fallbackFn) return done(fallbackFn());
-		else return done();
+		if (fallbackFn) return fallbackFn();
 	}
 }
 
@@ -251,10 +248,10 @@ QueryInterface.prototype.$query = function (options) {
 	var result;
 	function processHandler(handler) {
 		if (!handler) return;
-		handler(options.query, options.queryOptions, function() {
-			if (arguments.length>0) result = arguments[0];
-			else processHandler(handlers.shift());
-		})
+		result = handler(options.query, options.queryOptions);
+		if (typeof result === "undefined") {
+			processHandler(handlers.shift());
+		};
 	}
 	processHandler(handlers.shift());
 

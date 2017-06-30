@@ -41,26 +41,23 @@ Option | Type | Description
 
 Query results can be generated using query handlers. When multiple handlers are added to the QueryInterface, they will be called in order until one of them returns a valud result. If no handler returns a result, then QueryInterface will get the value from the list of queued results.
 
-The handler will receive three arguments
+The handler will receive two arguments
 
 - The name of the original query method: "findOne", "update", "destroy"...
 - The list of arguments passed to the original query method.
-- A callback that must be called with the result.
 
-The first two arguments can be used to filter the results. For example:
+Those arguments can be used to filter the results. For example:
 
 ```javascript
 User.$useHandler(function(query, queryOptions, done) {
-	if (query === 'findOne')) {
+	if (query === 'findOne') {
 		if (queryOptions[0].where.id === 42) {
 			// Result found, return it
-			done( User.build({ id: 42, name: 'foo' });
+			return User.build({ id: 42, name: 'foo' });
 		} else {
 			// No results
-			done( null );
+			return null;
 		}
-	} else {
-		done();
 	}
 });
 
@@ -73,16 +70,17 @@ User.findOne({where: {id: 1}}).then(function (user) {
 });
 ```
 
-The handler must call the function `done` (third argument) with the result of the query, or wit no value if the handler can't generate a value for that query. If a promise is passed to `done`, the status of that promise will be preserved by the query:
+The handler must return a value with the result of the query, or `undefined` if the handler can't generate a value for that query. If a promise is returned, the status of that promise will be preserved by the query:
 
 ```javascript
 User.$useHandler(function(query, queryOptions, done) {
 	if (query === "findOne") {
-		done(Promise.resolve(myValue));
+		return Promise.resolve(myValue);
 	} else if (query === "destroy") {
-		done(Promise.reject(new Sequelize.Error("DB down")));
+		return Promise.reject(new Sequelize.Error("DB down"));
 	} else {
-		done();
+		// This handler can handle this query
+		return;
 	}
 });
 User.findOne().then(function (user) {
@@ -97,16 +95,13 @@ Multiple handlers can be added. They are called in sequence until one of them re
 
 ```javascript
 User.$useHandler(function(query, queryOptions, done) {
-	if (query === "findOne") done(User.build({id: 1}));
-	else done();
+	if (query === "findOne") return User.build({id: 1});
 });
 User.$useHandler(function(query, queryOptions, done) {
-	if (query === "findById") done(User.build({id: queryOptions[0]}));
-	else done();
+	if (query === "findById") return User.build({id: queryOptions[0]});
 });
 User.$useHandler(function(query, queryOptions, done) {
-	if (query === "findOrCreate") done(User.build({id:1000}));
-	else done();
+	if (query === "findOrCreate") return User.build({id:1000});
 });
 
 User.findOne().then(function (user) {
@@ -117,6 +112,21 @@ User.findById(123).then(function (user) {
 });
 User.findOrCreate().then(function (user) {
 	user.get('id'); // === 1000
+});
+```
+
+If a handler wants to return `undefined` as the actual result of the query, it must be wrapped in a promise:
+
+```javascript
+User.$useHandler(function(query, queryOptions, done) {
+	return Promise.resolve(undefined)
+});
+User.$useHandler(function(query, queryOptions, done) {
+	// This handler is never called because the previous handler returned a value (a promise)
+});
+
+User.find().then(function (user) {
+	typeof user; // === 'undefined'
 });
 ```
 
