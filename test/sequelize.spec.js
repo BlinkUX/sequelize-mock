@@ -220,6 +220,24 @@ describe('Sequelize', function () {
 		});
 	});
 
+	describe('#model', function() {
+		it('should return a previously defined Mock Model referenced its name', function() {
+			var seq = new Sequelize();
+			var mock = seq.define('test', {});
+			seq.model('test').should.be.equal(mock);
+		});
+
+		it('should throw an error if there is no model with the specified name', function() {
+			var seq = new Sequelize();
+			var modelName = 'test';
+			var callModel = function() {
+				seq.model(modelName);
+			};
+
+			callModel.should.throw(Error);
+			callModel.should.throw(modelName + ' has not been defined');
+		});
+	});
 	
 	describe('#query', function () {
 		it('should pass query along to QueryInterface', function () {
