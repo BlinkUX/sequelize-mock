@@ -275,6 +275,20 @@ Sequelize.prototype.define = function (name, obj, opts) {
 };
 
 /**
+ * Checks whether a model with the given name is defined.
+ * 
+ * Uses the `.models` property for lookup.
+ * 
+ * @see{@link define}
+ * @see{@link models}
+ * @param {String} name Name of the model
+ * @return {Boolean} True if the model is defined, false otherwise
+ */
+Sequelize.prototype.isDefined = function (name) {
+	return name in this.models && typeof this.models[name] !== 'undefined';	
+};
+
+/**
  * Run a mock query against the `QueryInterface` associated with this Sequelize instance
  * 
  * @return {Promise<Any>} The next result of a query as queued to the `QueryInterface`
