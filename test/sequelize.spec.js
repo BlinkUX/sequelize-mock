@@ -204,6 +204,40 @@ describe('Sequelize', function () {
 			seq.define().should.be.instanceOf(ModelMock);
 		});
 	});
+
+	describe('#isDefined', function() {
+		it('should return true if the model is defined', function() {
+			var seq = new Sequelize();
+			seq.define('test', {});
+
+			seq.isDefined('test').should.be.true();
+		});
+
+		it('should return false if the model is not defined', function() {
+			var seq = new Sequelize();
+
+			seq.isDefined('test').should.be.false()
+		});
+	});
+
+	describe('#model', function() {
+		it('should return a previously defined Mock Model referenced its name', function() {
+			var seq = new Sequelize();
+			var mock = seq.define('test', {});
+			seq.model('test').should.be.equal(mock);
+		});
+
+		it('should throw an error if there is no model with the specified name', function() {
+			var seq = new Sequelize();
+			var modelName = 'test';
+			var callModel = function() {
+				seq.model(modelName);
+			};
+
+			callModel.should.throw(Error);
+			callModel.should.throw(modelName + ' has not been defined');
+		});
+	});
 	
 	describe('#query', function () {
 		it('should pass query along to QueryInterface', function () {
