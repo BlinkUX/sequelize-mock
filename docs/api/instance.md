@@ -171,7 +171,7 @@ Name | Type | Description
 
 
 ###  Return
-`Any, Object`: either the value of the key, or all the values if there is no key
+`Any, Object`: either the value of the key, or all the values if there is no key or key is an object with plain set to true: {plain: true}
 
 
 

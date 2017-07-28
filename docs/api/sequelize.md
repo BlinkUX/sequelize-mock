@@ -221,6 +221,44 @@ name | String | Name of the mock Model
 
 
 
+<a name="isDefined"></a>
+## isDefined(name) -> Boolean
+
+Checks whether a model with the given name is defined.
+
+Uses the `.models` property for lookup.
+
+###  Parameters
+
+Name | Type | Description
+--- | --- | ---
+name | String | Name of the model
+
+
+###  Return
+`Boolean`: True if the model is defined, false otherwise
+
+
+
+<a name="model"></a>
+## model(name) -> Model
+
+Fetch a Model which is already defined.
+
+Uses the `.models` property for lookup.
+
+###  Parameters
+
+Name | Type | Description
+--- | --- | ---
+name | String | Name of the model
+
+
+###  Return
+`Model`: Mock model which was defined with the specified name
+
+
+
 <a name="query"></a>
 ## query() -> Promise.&#60;Any&#62;
 

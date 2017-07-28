@@ -78,10 +78,63 @@ error | Any | The object or value to be returned as the failure for a query
 
 
 
+<a name="useHandler"></a>
+## $useHandler(handler) -> QueryInterface
+
+Adds a new query handler from the mock database
+
+###  Parameters
+
+Name | Type | Description
+--- | --- | ---
+handler | Function | The function that will be invoked with the query.
+
+
+###  Return
+`QueryInterface`: self
+
+
+
 <a name="clearQueue"></a>
 ## $clearQueue([options]) -> QueryInterface
 
 Clears any queued query results <br>**Alias** $queueClear
+
+###  Parameters
+
+Name | Type | Description
+--- | --- | ---
+[options] | Object | Options used when returning the result
+[options.propagateClear] | Boolean | Propagate this clear up to any parent `QueryInterface`s. Defaults to false
+
+
+###  Return
+`QueryInterface`: self
+
+
+
+<a name="clearHandlers"></a>
+## $clearHandlers([options]) -> QueryInterface
+
+Clears any handles <br>**Alias** $handlersClear
+
+###  Parameters
+
+Name | Type | Description
+--- | --- | ---
+[options] | Object | Options used when returning the result
+[options.propagateClear] | Boolean | Propagate this clear up to any parent `QueryInterface`s. Defaults to false
+
+
+###  Return
+`QueryInterface`: self
+
+
+
+<a name="clearResults"></a>
+## $clearResults([options]) -> QueryInterface
+
+Clears any reesults (both handlers and queued results) <br>**Alias** $handlersClear
 
 ###  Parameters
 
@@ -111,6 +164,8 @@ Name | Type | Description
 [options.includeCreated] | Boolean | Flag indicating if a `created` value should be returned with the result for this query. Defaults to false
 [options.includeAffectedRows] | Boolean | Flag indicating if the query expects `affectedRows` in the returned result parameters. Defautls to false
 [options.stopPropagation] | Boolean | Flag indicating if result queue propagation should be stopped on this query. Defaults to false
+[options.query] | String | Name of the original query: "findOne", "findOrCreate", "upsert", etc.
+[options.queryOptions] | Object | Array with the arguments passed to the original query method
 
 
 ###  Return

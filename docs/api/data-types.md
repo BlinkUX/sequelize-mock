@@ -19,187 +19,187 @@ sequelize.Sequelize.STRING
 <a name="STRING"></a>
 ## STRING
 
-Mock data type. Simply a no-op function for use in definitions
+Mock string data type
 
 
 
 <a name="CHAR"></a>
 ## CHAR
 
-Mock data type. Simply a no-op function for use in definitions
+Mock char data type
 
 
 
 <a name="TEXT"></a>
 ## TEXT
 
-Mock data type. Simply a no-op function for use in definitions
+Mock text data type
 
 
 
 <a name="INTEGER"></a>
 ## INTEGER
 
-Mock data type. Simply a no-op function for use in definitions
+Mock integer data type
 
 
 
 <a name="BIGINT"></a>
 ## BIGINT
 
-Mock data type. Simply a no-op function for use in definitions
+Mock big integer data type
 
 
 
 <a name="FLOAT"></a>
 ## FLOAT
 
-Mock data type. Simply a no-op function for use in definitions
+Mock float data type
 
 
 
 <a name="REAL"></a>
 ## REAL
 
-Mock data type. Simply a no-op function for use in definitions
+Mock real number data type
 
 
 
 <a name="DOUBLE"></a>
 ## DOUBLE
 
-Mock data type. Simply a no-op function for use in definitions
+Mock double data type
 
 
 
 <a name="DECIMAL"></a>
 ## DECIMAL
 
-Mock data type. Simply a no-op function for use in definitions
+Mock decimal data type
 
 
 
 <a name="BOOLEAN"></a>
 ## BOOLEAN
 
-Mock data type. Simply a no-op function for use in definitions
+Mock boolean data type
 
 
 
 <a name="TIME"></a>
 ## TIME
 
-Mock data type. Simply a no-op function for use in definitions
+Mock time data type
 
 
 
 <a name="DATE"></a>
 ## DATE
 
-Mock data type. Simply a no-op function for use in definitions
+Mock date data type
 
 
 
 <a name="DATEONLY"></a>
 ## DATEONLY
 
-Mock data type. Simply a no-op function for use in definitions
+Mock date-only data type
 
 
 
 <a name="HSTORE"></a>
 ## HSTORE
 
-Mock data type. Simply a no-op function for use in definitions
+Mock hstore data type
 
 
 
 <a name="JSON"></a>
 ## JSON
 
-Mock data type. Simply a no-op function for use in definitions
+Mock JSON data type
 
 
 
 <a name="JSONB"></a>
 ## JSONB
 
-Mock data type. Simply a no-op function for use in definitions
+Mock JSONB data type
 
 
 
 <a name="NOW"></a>
 ## NOW
 
-Mock data type. Simply a no-op function for use in definitions
+Mock now datetime data type
 
 
 
 <a name="BLOB"></a>
 ## BLOB
 
-Mock data type. Simply a no-op function for use in definitions
+Mock blob data type
 
 
 
 <a name="RANGE"></a>
 ## RANGE
 
-Mock data type. Simply a no-op function for use in definitions
+Mock range data type
 
 
 
 <a name="UUID"></a>
 ## UUID
 
-Mock data type. Simply a no-op function for use in definitions
+Mock UUID data type
 
 
 
 <a name="UUIDV1"></a>
 ## UUIDV1
 
-Mock data type. Simply a no-op function for use in definitions
+Mock UUIDV1 data type
 
 
 
 <a name="UUIDV4"></a>
 ## UUIDV4
 
-Mock data type. Simply a no-op function for use in definitions
+Mock UUIDV4 data type
 
 
 
 <a name="VIRTUAL"></a>
 ## VIRTUAL
 
-Mock data type. Simply a no-op function for use in definitions
+Mock virutal data type (even though all test types are technically virtual)
 
 
 
 <a name="ENUM"></a>
 ## ENUM
 
-Mock data type. Simply a no-op function for use in definitions
+Mock enum data type
 
 
 
 <a name="ARRAY"></a>
 ## ARRAY
 
-Mock data type. Simply a no-op function for use in definitions
+Mock array data type
 
 
 
 <a name="GEOMETRY"></a>
 ## GEOMETRY
 
-Mock data type. Simply a no-op function for use in definitions
+Mock geometry data type
 
 
 
 <a name="GEOGRAPHY"></a>
 ## GEOGRAPHY
 
-Mock data type. Simply a no-op function for use in definitions
+Mock geography data type
 
