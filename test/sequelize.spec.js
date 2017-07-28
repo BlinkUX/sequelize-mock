@@ -216,7 +216,7 @@ describe('Sequelize', function () {
 		it('should return false if the model is not defined', function() {
 			var seq = new Sequelize();
 
-			seq.isDefined('test').should.be.true()
+			seq.isDefined('test').should.be.false()
 		});
 	});
 
