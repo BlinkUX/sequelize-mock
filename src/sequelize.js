@@ -289,6 +289,25 @@ Sequelize.prototype.isDefined = function (name) {
 };
 
 /**
+ * Fetch a Model which is already defined.
+ * 
+ * Uses the `.models` property for lookup.
+ * 
+ * @see{@link define}
+ * @see{@link models}
+ * @param {String} name Name of the model
+ * @return {Model} Mock model which was defined with the specified name
+ * @throws {Error} Will throw an error if the model is not defined (that is, if sequelize#isDefined returns false)
+ */
+Sequelize.prototype.model = function (name) {
+	if (!this.isDefined(name)) {
+		throw new Error(name + ' has not been defined');
+	}
+
+	return this.models[name];
+}
+
+/**
  * Run a mock query against the `QueryInterface` associated with this Sequelize instance
  * 
  * @return {Promise<Any>} The next result of a query as queued to the `QueryInterface`
