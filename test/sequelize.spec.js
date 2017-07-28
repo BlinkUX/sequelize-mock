@@ -204,6 +204,22 @@ describe('Sequelize', function () {
 			seq.define().should.be.instanceOf(ModelMock);
 		});
 	});
+
+	describe('#isDefined', function() {
+		it('should return true if the model is defined', function() {
+			var seq = new Sequelize();
+			seq.define('test', {});
+
+			seq.isDefined('test').should.be.true();
+		});
+
+		it('should return false if the model is not defined', function() {
+			var seq = new Sequelize();
+
+			seq.isDefined('test').should.be.true()
+		});
+	});
+
 	
 	describe('#query', function () {
 		it('should pass query along to QueryInterface', function () {
