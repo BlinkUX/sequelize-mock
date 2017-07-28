@@ -4,6 +4,7 @@ vNext
   * Add DataType mock objects for use with any DataType funcitonality
   * Add support for conditional query result handling (thanks to @scinos)
   * Add support for `instance.get({ plain: true })` (thanks to @fredstrange)
+  * Add support for `sequelize.model` and `sequelize.isDefined` (thanks to @Thylossus)
   * Fix setting `isNewRecord` on instances to false after saving (issue #19; thanks to @scinos)
 
 v0.8.1 - c2527de - May 22nd 2017
