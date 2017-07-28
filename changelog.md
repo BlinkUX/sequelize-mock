@@ -1,6 +1,6 @@
 # Changelog
 
-v0.9.0 - Jul 28th 2017
+v0.9.0 - c75d75e - Jul 28th 2017
   * Add DataType mock objects for use with any DataType funcitonality
   * Add support for conditional query result handling (thanks to @scinos)
   * Add support for `instance.get({ plain: true })` (thanks to @fredstrange)
