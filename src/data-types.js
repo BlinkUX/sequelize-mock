@@ -26,6 +26,7 @@ function noop() {}
  * 
  * @class Abstract
  * @constructor
+ * @private
  **/
 function Abstract () {
 }
@@ -36,6 +37,7 @@ Abstract.prototype.toString =
  * 
  * @instance
  * @return {String} Key for this datatype
+ * @private
  **/
 Abstract.prototype.toSql = function () {
 	return this.key;
@@ -48,6 +50,7 @@ Abstract.prototype.toSql = function () {
  * @param {*} value The value to stringify
  * @param {Object} options Any options the stringify for this datatype accepts
  * @return {String} A string version value passed in
+ * @private
  **/
 Abstract.prototype.stringify = function (value, options) {
 	if (this.$stringify) {
@@ -61,6 +64,7 @@ Abstract.prototype.stringify = function (value, options) {
  * 
  * @instance
  * @return {String} Key for this datatype
+ * @private
  **/
 Abstract.inherits = function (Inheriting) {
 	util.inherits(Inheriting, this);
