@@ -1,6 +1,7 @@
 # Changelog
 
 vNext
+  * Add DataType mock objects for use with any DataType funcitonality
   * Add support for conditional query result handling (thanks to @scinos)
   * Add support for `instance.get({ plain: true })` (thanks to @fredstrange)
   * Fix setting `isNewRecord` on instances to false after saving (issue #19; thanks to @scinos)
