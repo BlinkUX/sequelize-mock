@@ -13,7 +13,7 @@ Alternatively you can install the library by [downloading the latest code](https
 Because Sequelize Mock is meant to be a drop-in replacement for testing, it mirrors Sequelize in many ways including the base object's functionality. As such, you'll want to setup a fake DB connection, though you don't need any actual connection data.
 
 ```javascript
-var SequelizeMock = require('sequelize-mock')();
+var SequelizeMock = require('sequelize-mock');
 
 var dbMock = new SequelizeMock();
 ```
