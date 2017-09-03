@@ -257,4 +257,10 @@ describe('Sequelize', function () {
 		});
 	});
 	
+	describe('#authenticate', function () {
+		it('should simply return a resolving promise', (done) => {
+			var seq = new Sequelize();
+			seq.authenticate().then(done).catch(done);
+		})
+  });
 });
