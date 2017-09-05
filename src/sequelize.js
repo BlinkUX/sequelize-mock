@@ -346,4 +346,15 @@ Sequelize.prototype.literal = function (arg) {
 	return arg;
 };
 
+/**
+ * Simply returns a resolving promise
+ *
+ * @return {Promise}
+ */
+Sequelize.prototype.authenticate = function() {
+	return new bluebird(function (resolve) {
+		return resolve();
+	});
+};
+
 module.exports = Sequelize;
