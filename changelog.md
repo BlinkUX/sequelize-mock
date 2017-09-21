@@ -1,5 +1,9 @@
 # Changelog
 
+vNext
+  * Add `authenticate()` to `sequelize` which always resolves (thanks to @vFederer)
+  * Fix a few documentation issues
+
 v0.9.0 - c75d75e - Jul 28th 2017
   * Add DataType mock objects for use with any DataType funcitonality
   * Add support for conditional query result handling (thanks to @scinos)
