@@ -347,9 +347,9 @@ Sequelize.prototype.literal = function (arg) {
 };
 
 /**
- * Simply returns a resolving promise
+ * Always returns a resolved promise
  *
- * @return {Promise}
+ * @return {Promise} will always resolve as a successful authentication
  */
 Sequelize.prototype.authenticate = function() {
 	return new bluebird(function (resolve) {

@@ -303,3 +303,13 @@ arg | Any | Value to return
 ###  Return
 `Any`: value passed in
 
+
+
+<a name="authenticate"></a>
+## authenticate() -> Promise
+
+Always returns a resolved promise
+
+###  Return
+`Promise`: will always resolve as a successful authentication
+
