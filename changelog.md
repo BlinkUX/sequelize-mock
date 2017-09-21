@@ -1,6 +1,6 @@
 # Changelog
 
-v0.9.1 - Sep 21st 2017
+v0.9.1 - 3aeaa05 - Sep 21st 2017
   * Add `authenticate()` to `sequelize` which always resolves (thanks to @vFederer)
   * Fix a few documentation issues
 
