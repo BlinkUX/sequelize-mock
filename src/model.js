@@ -277,6 +277,52 @@ fakeModel.prototype.findAll =  function (options) {
 	});
 };
 
+
+/**
+ * Executes a mock query to find all of the instances with any provided options and also return 
+ * the count. Without any other configuration, the default behavior when no queueud query result 
+ * is present is to create an array of a single result based on the where query in the options and
+ * wraps it in a promise.
+ * 
+ * To turn off this behavior, the `$autoQueryFallback` option on the model should be set
+ * to `false`.
+ * 
+ * @example
+ * // This is an example of the default behavior with no queued results
+ * // If there is a queued result or failure, that will be returned instead
+ * User.findAndCountAll({
+ * 	where: {
+ * 		email: 'myEmail@example.com',
+ * 	},
+ * }).then(function (results) {
+ * 	// results is an array of 1
+ *  results.count = 1
+ * 	results.rows[0].get('email') === 'myEmail@example.com'; // true
+ * });
+ * 
+ * @instance
+ * @param {Object} [options] Options for the findAll query
+ * @param {Object} [options.where] Values that any automatically created Instances should have
+ * @return {Promise<Instance[]>} result returned by the mock query
+ **/
+fakeModel.prototype.findAndCountAll =  function (options) {
+	var self = this;
+	
+	return this.$query({
+		query: "findAndCountAll",
+		queryOptions: arguments,
+		fallbackFn: !this.options.autoQueryFallback ? null : function () {
+			return Promise.resolve([ self.build(options ? options.where : {}) ])
+				.then(function(result){
+					return Promise.resolve({
+						count: result.length,
+						rows: result
+					});
+				});
+		},
+	});
+};
+
 /**
  * Executes a mock query to find an instance with the given ID value. Without any other
  * configuration, the default behavior when no queueud query result is present is to
