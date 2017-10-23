@@ -301,10 +301,13 @@ fakeModel.prototype.findAll =  function (options) {
  * });
  * 
  * @instance
+ * @method findAndCount
+ * @alias findAndCountAll
  * @param {Object} [options] Options for the findAll query
  * @param {Object} [options.where] Values that any automatically created Instances should have
- * @return {Promise<Instance[]>} result returned by the mock query
+ * @return {Promise<Object>} result returned by the mock query
  **/
+fakeModel.prototype.findAndCount =
 fakeModel.prototype.findAndCountAll =  function (options) {
 	var self = this;
 	
