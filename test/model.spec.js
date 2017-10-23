@@ -166,6 +166,7 @@ describe('Model', function () {
 			mdl.should.have.property('scope').which.is.a.Function();
 			mdl.should.have.property('find').which.is.a.Function();
 			mdl.should.have.property('findAll').which.is.a.Function();
+			mdl.should.have.property('findAndCountAll').which.is.a.Function();
 			mdl.should.have.property('findById').which.is.a.Function();
 			mdl.should.have.property('findOne').which.is.a.Function();
 			// mdl.should.have.property('aggregate').which.is.a.Function();
@@ -605,6 +606,55 @@ describe('Model', function () {
 		});
 	});
 	
+	describe('#findAndCountAll', function () {
+		var mdl;
+		beforeEach(function () {
+			mdl = new Model('foo');
+		});
+		
+		it('should pass along where value to Instance creation', function (done) {
+			var options = {
+				where: {
+					'foo': 'bar',
+				},
+			};
+			
+			mdl.findAndCountAll(options)
+				.fallbackFn().then(function (result) {
+					result.rows.length.should.equal(1);
+					result.count.should.equal(1);
+					result.rows[0]._args[0].should.have.property('foo').which.is.exactly('bar');
+					done();
+				}).catch(done);
+		});
+		
+		it('should still find results if there is not options', function (done) {
+			mdl.findAndCountAll()
+				.fallbackFn().then(function (result) {
+					result.count.should.equal(1);
+					result.rows.length.should.equal(1);
+					done();
+				}).catch(done);
+		});
+		
+		it('should not pass along a fallback function if auto fallback is turned off', function () {
+			mdl.options.autoQueryFallback = false;
+			should.not.exist(mdl.findAndCountAll().fallbackFn);
+		});
+		
+		it('should pass query info to the QueryInterface instance', function(done) {
+			var queryOptions = {};
+			
+			mdl.$query = function(options) {
+				options.query.should.equal('findAndCountAll');
+				options.queryOptions.length.should.equal(1);
+				options.queryOptions[0].should.equal(queryOptions);
+				done();
+			}
+			mdl.findAndCountAll(queryOptions)
+		});
+	});
+
 	describe('#destroy', function () {
 		var mdl;
 		beforeEach(function () {
