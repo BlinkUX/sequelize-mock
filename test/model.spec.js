@@ -166,6 +166,7 @@ describe('Model', function () {
 			mdl.should.have.property('scope').which.is.a.Function();
 			mdl.should.have.property('find').which.is.a.Function();
 			mdl.should.have.property('findAll').which.is.a.Function();
+			mdl.should.have.property('findAndCount').which.is.a.Function();
 			mdl.should.have.property('findAndCountAll').which.is.a.Function();
 			mdl.should.have.property('findById').which.is.a.Function();
 			mdl.should.have.property('findOne').which.is.a.Function();
