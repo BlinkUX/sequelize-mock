@@ -33,6 +33,13 @@ Options passed into the Sequelize initialization
 
 
 
+<a name="importCache"></a>
+### .importCache
+
+Used to cache and override model imports for easy mock model importing
+
+
+
 <a name="models"></a>
 ### .models
 
@@ -151,6 +158,25 @@ Clears any queued results from `$queueResult` or `$queueFailure` <br>**Alias** $
 
 
 
+<a name="overrideImport"></a>
+## $overrideImport(importPath, overridePath)
+
+Overrides a path used for import
+
+**See**
+
+ - [import](#import)
+
+###  Parameters
+
+Name | Type | Description
+--- | --- | ---
+importPath | String | The original path that import will be called with
+overridePath | String | The path that should actually be used for resolving. If this path is relative, it will be relative to the file calling the import function
+
+
+
+
 <a name="getDialect"></a>
 ## getDialect() -> String
 
@@ -237,6 +263,30 @@ name | String | Name of the model
 
 ###  Return
 `Boolean`: True if the model is defined, false otherwise
+
+
+
+<a name="import"></a>
+## import(path) -> Any
+
+Imports a given model from the provided file path. Files that are imported should
+export a function that accepts two parameters, this sequelize instance, and an object
+with all of the available datatypes
+
+Before importing any modules, it will remap any paths that were overridden using the
+`$overrideImport` test function. This method is most helpful when used to make the
+SequelizeMock framework import your mock models instead of the real ones in your test
+code.
+
+###  Parameters
+
+Name | Type | Description
+--- | --- | ---
+path | String | Path of the model to import. Can be relative or absolute
+
+
+###  Return
+`Any`: The result of evaluating the imported file's function
 
 
 
