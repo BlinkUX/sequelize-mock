@@ -1,6 +1,6 @@
 # Changelog
 
-vNext
+v0.10.0 - Oct 24th 2017
   * Add `sequelize.import` support
   * Add `sequelize.$overrideImport` test functionality to allow overriding imported module paths
   * Add support for `Model.findAndCount()` and it's alias `Model.findAndCountAll()` (thanks to @TerryMooreII)
