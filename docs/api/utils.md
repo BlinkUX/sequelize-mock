@@ -74,6 +74,13 @@ str | String | Word to convert to its plural form
 
 
 
+<a name="stack"></a>
+## stack()
+
+Gets the current stack frame
+
+
+
 <a name="lodash"></a>
 ## lodash
 

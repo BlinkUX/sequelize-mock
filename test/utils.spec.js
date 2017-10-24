@@ -80,4 +80,35 @@ describe('Utils', function () {
 		});
 	});
 	
+	describe('#stack', function () {
+		var captureStack;
+		beforeEach(function () {
+			captureStack = Error.captureStackTrace;
+		});
+		
+		afterEach(function () {
+			Error.captureStackTrace = captureStack;
+		});
+		
+		it('should capture and return the stack trace', function () {
+			var arg1, arg2;
+			Error.captureStackTrace = function (obj, fn) {
+				arg1 = obj;
+				arg2 = fn;
+				obj.stack = 'bar';
+			};
+			
+			var ret = Utils.stack();
+			
+			// We need to restore nomality here so that the asserts and things can work properly
+			Error.captureStackTrace = captureStack;
+			
+			should(arg1).be.Object();
+			should(arg2).be.Function();
+			
+			ret.should.equal('bar');
+		});
+		
+	});
+	
 });
