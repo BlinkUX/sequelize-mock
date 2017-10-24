@@ -266,6 +266,46 @@ Name | Type | Description
 
 
 
+<a name="findAndCount"></a>
+## findAndCount([options]) -> Promise.&#60;Object&#62;
+
+Executes a mock query to find all of the instances with any provided options and also return 
+the count. Without any other configuration, the default behavior when no queueud query result 
+is present is to create an array of a single result based on the where query in the options and
+wraps it in a promise.
+
+To turn off this behavior, the `$autoQueryFallback` option on the model should be set
+to `false`. <br>**Alias** findAndCountAll
+
+**Example**
+
+```javascript
+// This is an example of the default behavior with no queued results
+// If there is a queued result or failure, that will be returned instead
+User.findAndCountAll({
+	where: {
+		email: 'myEmail@example.com',
+	},
+}).then(function (results) {
+	// results is an array of 1
+ results.count = 1
+	results.rows[0].get('email') === 'myEmail@example.com'; // true
+});
+```
+
+###  Parameters
+
+Name | Type | Description
+--- | --- | ---
+[options] | Object | Options for the findAll query
+[options.where] | Object | Values that any automatically created Instances should have
+
+
+###  Return
+`Promise.<Object>`: result returned by the mock query
+
+
+
 <a name="findById"></a>
 ## findById(id) -> Promise.&#60;Instance&#62;
 
