@@ -1,6 +1,6 @@
 # Changelog
 
-vNext
+v0.10.1 - Nov 20th 2017
   * Fix for relative file paths in the `sequelize.import` function
 
 v0.10.0 - 0a7f270f - Oct 24th 2017
