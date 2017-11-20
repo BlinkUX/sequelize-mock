@@ -329,7 +329,7 @@ Sequelize.prototype.import = function (importPath) {
 	
 	if(path.normalize(importPath) !== path.resolve(importPath)) {
 		// We're relative, and need the calling files location
-		var callLoc = path.dirname(Utils.stack().getFileName());
+		var callLoc = path.dirname(Utils.stack()[1].getFileName());
 		
 		importPath = path.resolve(callLoc, importPath);
 	}

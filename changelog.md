@@ -1,5 +1,8 @@
 # Changelog
 
+vNext
+  * Fix for relative file paths in the `sequelize.import` function
+
 v0.10.0 - 0a7f270f - Oct 24th 2017
   * Add `sequelize.import` support
   * Add `sequelize.$overrideImport` test functionality to allow overriding imported module paths

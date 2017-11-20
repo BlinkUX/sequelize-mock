@@ -253,7 +253,7 @@ describe('Sequelize', function () {
 			var pathRun = 0;
 			var stackRun = 0;
 			PathMock.resolve = function () { pathRun++; return './bar'; };
-			UtilsMock.stack = function () { stackRun++; return { getFileName: function () { return 'baz'; }}; };
+			UtilsMock.stack = function () { stackRun++; return [0, { getFileName: function () { return 'baz'; } } ] };
 			var findItem = {};
 			
 			seq.importCache = {
