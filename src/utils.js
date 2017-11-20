@@ -61,8 +61,9 @@ exports.stack = function () {
 	Error.prepareStackTrace = function (_, s) { return s; };
 	var curr = {};
 	Error.captureStackTrace(curr, exports.stack);
+	var stack = curr.stack;
 	Error.prepareStackTrace = prepareStackTrace;
-	return curr.stack;
+	return stack;
 };
 
 /**
