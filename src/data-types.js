@@ -546,4 +546,6 @@ module.exports = function (Sequelize) {
 	Sequelize.ARRAY     = ARRAY;
 	Sequelize.GEOMETRY  = GEOMETRY;
 	Sequelize.GEOGRAPHY = GEOGRAPHY;
+	
+	return Sequelize;
 };
