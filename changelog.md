@@ -1,5 +1,8 @@
 # Changelog
 
+vNext
+  * *DEV* Added .editorconfig file to normalize editors and minimize whitespace changes
+
 v0.10.1 - 43cc668 - Nov 20th 2017
   * Fix for relative file paths in the `sequelize.import` function
 
