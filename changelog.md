@@ -1,6 +1,6 @@
 # Changelog
 
-vNext
+v0.10.2 - Dec 4th 2017
   * Fix for DataTypes not being exposed during `sequelize.import` calls
   * *DEV* Added .editorconfig file to normalize editors and minimize whitespace changes
 
