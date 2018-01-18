@@ -240,6 +240,14 @@ fakeModel.prototype.scope = function () {
 };
 
 /**
+ * No-op that returns a void.
+ * 
+ * @instance
+ * @return {undefined}
+ **/
+fakeModel.prototype.addScope = function () {};
+
+/**
  * Executes a mock query to find all of the instances with any provided options. Without
  * any other configuration, the default behavior when no queueud query result is present
  * is to create an array of a single result based on the where query in the options and
