@@ -162,7 +162,7 @@ describe('Model', function () {
 			// mdl.should.have.property('schema').which.is.a.Function();
 			mdl.should.have.property('getTableName').which.is.a.Function();
 			mdl.should.have.property('unscoped').which.is.a.Function();
-			// mdl.should.have.property('addScope').which.is.a.Function();
+			mdl.should.have.property('addScope').which.is.a.Function();
 			mdl.should.have.property('scope').which.is.a.Function();
 			mdl.should.have.property('find').which.is.a.Function();
 			mdl.should.have.property('findAll').which.is.a.Function();
