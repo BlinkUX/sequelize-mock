@@ -161,7 +161,25 @@ describe('Instance', function () {
 			inst.get().should.be.eql({foo: 'bar'});
 		});
 	});
-	
+
+	describe('#getDataValue', function () {
+		it('should get the value of a property on the object', function () {
+			var inst = new Instance();
+			inst._values.foo = 'bar';
+			
+			inst.getDataValue('foo').should.be.exactly('bar');
+		});
+	});
+
+    describe('#setDataValue', function () {
+		it('should set the value of a property on the object', function () {
+			var inst = new Instance();
+			inst._values.foo = 'bar';
+            inst.setDataValue('foo', 'baz');
+			inst._values.foo.should.be.exactly('baz');
+		});
+	});
+
 	describe('#validate', function () {
 		it('should return no validation errors if no errors are set on the instances', function (done) {
 			var inst = new Instance();
