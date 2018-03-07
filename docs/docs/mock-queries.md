@@ -39,7 +39,7 @@ Option | Type | Description
 
 ## Query handlers
 
-Query results can be generated using query handlers. When multiple handlers are added to the QueryInterface, they will be called in order until one of them returns a valud result. If no handler returns a result, then QueryInterface will get the value from the list of queued results.
+Query results can be generated using query handlers. When multiple handlers are added to the QueryInterface, they will be called in order until one of them returns a valid result. If no handler returns a result, then QueryInterface will get the value from the list of queued results.
 
 The handler will receive two arguments
 
