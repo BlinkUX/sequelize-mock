@@ -32,23 +32,17 @@ function Col(val) {
  * Fn object
  * @class
  * @param {String} val
+ * @param {any[]} [args]
  */
-function Fn(val) {
+function Fn(val, args) {
+    if (typeof args === 'undefined') {
+        args = [];
+    }
+
     this.toString = function() {
-        return val;
+        return val + '(' + _.map(args, JSON.stringify).join(', ') + ')';
     };
 };
-
-/**
- * Literal object
- * @class
- * @param {any} val
- */
-function Literal(val) {
-    this.toString = function() {
-        return val;
-    };
-}
 
 /**
  * Sequelize Mock Object. This can be initialize much the same way that Sequelize itself
@@ -139,23 +133,23 @@ Sequelize.col = function(val) {
  * @method fn
  * @memberof Sequelize
  * @param {String} fn The function you want to call
- * @param {any} args All further arguments will be passed as arguments to the function
+ * @param {any[]} args All further arguments will be passed as arguments to the function
  * @return {Fn}
  */
 Sequelize.fn = function(val, args) {
-    return new Fn(val);
+    return new Fn(val, args);
 }
 
 /**
  * Creates an object representing a literal, i.e. something that will not be escaped.
  *
  * @method literal
- * @param {any} val
  * @memberof Sequelize
- * @return {Literal}
+ * @param {any} val
+ * @return {String}
  */
 Sequelize.literal = function(val) {
-    return new Utils.Literal(val);
+    return val;
 }
 
 /**
