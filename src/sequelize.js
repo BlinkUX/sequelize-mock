@@ -461,16 +461,6 @@ Sequelize.prototype.transaction = function (fn) {
 };
 
 /**
- * Simply returns the first argument passed in, unmodified.
- * 
- * @param {Any} arg Value to return
- * @return {Any} value passed in
- */
-Sequelize.prototype.literal = function (arg) {
-	return arg;
-};
-
-/**
  * Always returns a resolved promise
  *
  * @return {Promise} will always resolve as a successful authentication
