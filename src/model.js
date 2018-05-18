@@ -606,6 +606,26 @@ fakeModel.prototype.update = function (values, options) {
 };
 
 // Noops
+fakeModel.prototype.beforeBulkCreate =
+fakeModel.prototype.beforeBulkDestroy =
+fakeModel.prototype.beforeBulkUpdate =
+fakeModel.prototype.beforeValidate =
+fakeModel.prototype.afterValidate =
+fakeModel.prototype.validationFailed =
+fakeModel.prototype.beforeCreate =
+fakeModel.prototype.beforeDestroy =
+fakeModel.prototype.beforeUpdate =
+fakeModel.prototype.beforeSave =
+fakeModel.prototype.beforeUpsert =
+fakeModel.prototype.afterCreate =
+fakeModel.prototype.afterDestroy =
+fakeModel.prototype.afterUpdate =
+fakeModel.prototype.afterSave =
+fakeModel.prototype.afterUpsert =
+fakeModel.prototype.afterBulkCreate =
+fakeModel.prototype.afterBulkDestroy =
+fakeModel.prototype.afterBulkUpdate =
+fakeModel.prototype.hook =
 fakeModel.prototype.addHook =
 fakeModel.prototype.removeHook = function () {};
 
