@@ -410,4 +410,15 @@ Sequelize.prototype.authenticate = function() {
 	});
 };
 
+/**
+ * Always returns a resolved promise
+ *
+ * @return {Promise} will always resolve as a successful sync
+ */
+Sequelize.prototype.sync = function() {
+	return new bluebird(function (resolve) {
+		return resolve();
+	});
+};
+
 module.exports = Sequelize;
