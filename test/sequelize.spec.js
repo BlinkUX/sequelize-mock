@@ -39,6 +39,7 @@ var Sequelize = proxyquire('../src/sequelize', {
 	'./data-types'     : function () {},
 	
 	'import-test'      : importTestFunc,
+	'import-test-es6'  : { default: importTestFunc },
 });
 
 describe('Sequelize', function () {
@@ -271,6 +272,18 @@ describe('Sequelize', function () {
 				'bar': findItem,
 			};
 			seq.import('foo').should.be.exactly(findItem);
+		});
+
+		it('should import an es6 model from the given path', function () {
+			seq.import('import-test-es6');
+			should(lastImportTestCall).not.be.Null();
+			lastImportTestCall[0].should.be.exactly(seq);
+		});
+
+		it('should import a model function as the second argument (for meteor compatibility)', function () {
+			seq.import('import-test', importTestFunc);
+			should(lastImportTestCall).not.be.Null();
+			lastImportTestCall[0].should.be.exactly(seq);
 		});
 	});
 	

@@ -334,8 +334,13 @@ Sequelize.prototype.import = function (importPath) {
 		importPath = path.resolve(callLoc, importPath);
 	}
 	
-	if(this.importCache[importPath] === 'string' || !this.importCache[importPath]) {
-		this.importCache[importPath] = require(importPath)(this, DataTypes);
+	if(this.importCache[importPath] === 'string' || !this.importCache[importPath]) {		
+		var defineCall = arguments.length > 1 ? arguments[1] : require(importPath);
+		if(typeof defineCall === 'object') {
+			// ES6 module compatibility
+			defineCall = defineCall.default;
+		}
+		this.importCache[importPath] = defineCall(this, DataTypes);
 	}
 	
 	return this.importCache[importPath];
