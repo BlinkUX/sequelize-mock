@@ -319,4 +319,15 @@ fakeModelInstance.prototype.toJSON = fakeModelInstance.prototype.toJson = functi
 	return this.get();
 };
 
+/**
+ * This has no effect on the Instance
+ * 
+ * @instance
+ * @return {Promise<Instance>} will always resolve with the current instance
+ **/
+fakeModelInstance.prototype.sync = function () {
+	return bluebird.resolve(this);
+};
+
+
 module.exports = fakeModelInstance;
