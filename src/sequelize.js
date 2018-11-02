@@ -18,6 +18,33 @@ var path = require('path'),
 	QueryInterface = require('./queryinterface');
 
 /**
+ * Col object
+ * @class
+ * @param {String} val
+ */
+function Col(val) {
+    this.toString = function() {
+        return val;
+    };
+};
+
+/**
+ * Fn object
+ * @class
+ * @param {String} val
+ * @param {any[]} [args]
+ */
+function Fn(val, args) {
+    if (typeof args === 'undefined') {
+        args = [];
+    }
+
+    this.toString = function() {
+        return val + '(' + _.map(args, JSON.stringify).join(', ') + ')';
+    };
+};
+
+/**
  * Sequelize Mock Object. This can be initialize much the same way that Sequelize itself
  * is initialized. Any configuration or options is ignored, so it can be used as a drop-in
  * replacement for Sequelize but does not have all the same functionality or features.
@@ -69,6 +96,7 @@ function Sequelize(database, username, password, options) {
 	 **/
 	this.models = {};
 }
+
 /**
  * Version number for the Mock library
  * 
@@ -86,6 +114,43 @@ Sequelize.version = require('../package.json').version;
  * @private
  **/
 Sequelize.options = {hooks: {}};
+
+/**
+ * Creates an object which represents a column in the DB, this allows referencing another column in your query. This is often useful in conjunction with `sequelize.fn`, since raw string arguments to fn will be escaped.
+ * @method col
+ * @memberof Sequelize
+ * @param {String} col The name of the column
+ * @return {Col}
+ */
+Sequelize.col = function(val) {
+    return new Col(val);
+}
+
+/**
+ *  Creates an object representing a database function. This can be used in search queries, both in where and order parts, and as default values in column definitions.
+ * If you want to refer to columns in your function, you should use `sequelize.col`, so that the columns are properly interpreted as columns and not a strings.
+ *
+ * @method fn
+ * @memberof Sequelize
+ * @param {String} fn The function you want to call
+ * @param {any[]} args All further arguments will be passed as arguments to the function
+ * @return {Fn}
+ */
+Sequelize.fn = function(val, args) {
+    return new Fn(val, args);
+}
+
+/**
+ * Creates an object representing a literal, i.e. something that will not be escaped.
+ *
+ * @method literal
+ * @memberof Sequelize
+ * @param {any} val
+ * @return {String}
+ */
+Sequelize.literal = function(val) {
+    return val;
+}
 
 /**
  * Reference to the mock Sequelize class
@@ -395,16 +460,6 @@ Sequelize.prototype.transaction = function (fn) {
 };
 
 /**
- * Simply returns the first argument passed in, unmodified.
- * 
- * @param {Any} arg Value to return
- * @return {Any} value passed in
- */
-Sequelize.prototype.literal = function (arg) {
-	return arg;
-};
-
-/**
  * Always returns a resolved promise
  *
  * @return {Promise} will always resolve as a successful authentication
@@ -414,5 +469,10 @@ Sequelize.prototype.authenticate = function() {
 		return resolve();
 	});
 };
+
+// Aliases
+Sequelize.prototype.fn = Sequelize.fn;
+Sequelize.prototype.col = Sequelize.col;
+Sequelize.prototype.literal = Sequelize.asIs = Sequelize.prototype.asIs = Sequelize.literal;
 
 module.exports = Sequelize;
