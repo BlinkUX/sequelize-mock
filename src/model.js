@@ -188,6 +188,20 @@ function fakeModel (name, defaults, opts) {
 	 * @return {QueryInterface} model instance of QueryInterface
 	 **/
 	this.$clearQueue = this.$queueClear = this.$queryInterface.$clearQueue.bind(this.$queryInterface);
+	/**
+	 * Clears any handlers for this model.
+	 * 
+	 * @example
+	 * UserMock.$clearHandlers();
+	 * 
+	 * @instance
+	 * @method $clearHandlers
+	 * @see {@link ./queryinterface.md#clearHandlers|QueryInterface.$clearHandlers}
+	 * @param {Object} [options] Options used when returning the result
+	 * @param {Boolean} [options.propagateClear] Propagate this clear up to any parent `QueryInterface`s. Defaults to false
+	 * @return {QueryInterface} model instance of QueryInterface
+	 **/
+	this.$clearHandlers = this.$queryInterface.$clearHandlers.bind(this.$queryInterface);
 	this.$query = this.$queryInterface.$query.bind(this.$queryInterface);
 }
 
