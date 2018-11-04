@@ -308,6 +308,66 @@ fakeModelInstance.prototype.update = function (obj) {
 };
 
 /**
+ * Increment
+ * @instance
+ * @param {String|Array|Object} fields
+ * @param {Object} [options]
+ * @param {Object} [options.by = 1] The number to increment by
+ * @return {Promise<instance>}
+ */
+fakeModelInstance.prototype.increment = function (fields, options) {
+    if (!Array.isArray(fields) && typeof fields === 'object') {
+        for (let k in fields) {
+            this.increment(k, { by: fields[k] });
+        }
+
+        return bluebird.resolve(this);
+    }
+
+    if (typeof fields === 'string') {
+        fields = [fields];
+    } 
+
+    let by = typeof options !== 'undefined' ? options.by || 1 : 1;
+
+    for(let i = 0; i <= fields.length; i++) {
+        this._values[fields[i]] += by;
+    }
+
+    return bluebird.resolve(this);
+};
+
+/**
+ * Decrement
+ * @instance
+ * @param {String|Array|Object} fields
+ * @param {Object} [options]
+ * @param {Object} [options.by = 1] The number to decrement by
+ * @return {Promise<instance>}
+ */
+fakeModelInstance.prototype.decrement = function (fields, options) {
+    if (!Array.isArray(fields) && typeof fields === 'object') {
+        for (let k in fields) {
+            this.decrement(k, { by: fields[k] });
+        }
+
+        return bluebird.resolve(this);
+    }
+
+    if (typeof fields === 'string') {
+        fields = [fields];
+    } 
+
+    let by = typeof options !== 'undefined' ? options.by || 1 : 1;
+
+    for(let i = 0; i <= fields.length; i++) {
+        this._values[fields[i]] -= by;
+    }
+
+    return bluebird.resolve(this);
+};
+
+/**
  * Returns all the values in a JSON representation.
  * 
  * @method toJSON

@@ -298,7 +298,149 @@ describe('Instance', function () {
 			}).catch(done);
 		});
 	});
-	
+
+    describe('#increment', () => {
+        it('should increment field passed by 1', () => {
+            let inst = new Instance();
+
+            inst._values = {
+                foo: 3,
+            };
+
+            inst.increment('foo');
+
+            inst._values.foo.should.equal(4);
+        });
+
+        it('should increment field passed by 2', () => {
+            let inst = new Instance();
+
+            inst._values = {
+                foo: 3,
+            };
+
+            inst.increment('foo', { by: 2 });
+
+            inst._values.foo.should.equal(5);
+        });
+
+        it('should increment fields passed by 1', () => {
+            let inst = new Instance();
+
+            inst._values = {
+                foo: 3,
+                bar: 2,
+            };
+
+            inst.increment(['foo', 'bar']);
+
+            inst._values.foo.should.equal(4);
+            inst._values.bar.should.equal(3);
+        });
+
+        it('should increment fields passed by 2', () => {
+            let inst = new Instance();
+
+            inst._values = {
+                foo: 3,
+                bar: 2,
+            };
+
+            inst.increment(['foo', 'bar'], { by: 2 });
+
+            inst._values.foo.should.equal(5);
+            inst._values.bar.should.equal(4);
+        });
+
+        it('should increment fields as dicto', () => {
+            let inst = new Instance();
+
+            inst._values = {
+                foo: 2,
+                bar: 2,
+            };
+
+            inst.increment({
+                foo: 2,
+                bar: 3,
+            });
+
+            inst._values.foo.should.equal(4);
+            inst._values.bar.should.equal(5);
+        });
+    });
+
+    describe('#decrement', () => {
+        it('should decrement field passed by 1', () => {
+            let inst = new Instance();
+
+            inst._values = {
+                foo: 3,
+            };
+
+            inst.decrement('foo');
+
+            inst._values.foo.should.equal(2);
+        });
+
+        it('should decrement field passed by 2', () => {
+            let inst = new Instance();
+
+            inst._values = {
+                foo: 3,
+            };
+
+            inst.decrement('foo', { by: 2 });
+
+            inst._values.foo.should.equal(1);
+        });
+
+        it('should decrement fields passed by 1', () => {
+            let inst = new Instance();
+
+            inst._values = {
+                foo: 3,
+                bar: 2,
+            };
+
+            inst.decrement(['foo', 'bar']);
+
+            inst._values.foo.should.equal(2);
+            inst._values.bar.should.equal(1);
+        });
+
+        it('should decrement fields passed by 2', () => {
+            let inst = new Instance();
+
+            inst._values = {
+                foo: 3,
+                bar: 2,
+            };
+
+            inst.decrement(['foo', 'bar'], { by: 2 });
+
+            inst._values.foo.should.equal(1);
+            inst._values.bar.should.equal(0);
+        });
+
+        it('should decrement fields as dicto', () => {
+            let inst = new Instance();
+
+            inst._values = {
+                foo: 2,
+                bar: 2,
+            };
+
+            inst.decrement({
+                foo: 2,
+                bar: 3,
+            });
+
+            inst._values.foo.should.equal(0);
+            inst._values.bar.should.equal(-1);
+        });
+    });
+
 	describe('#toJSON', function () {
 		it('should have the function aliased to toJson', function () {
 			var inst = new Instance();
