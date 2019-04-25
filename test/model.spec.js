@@ -168,7 +168,7 @@ describe('Model', function () {
 			mdl.should.have.property('findAll').which.is.a.Function();
 			mdl.should.have.property('findAndCount').which.is.a.Function();
 			mdl.should.have.property('findAndCountAll').which.is.a.Function();
-			mdl.should.have.property('findById').which.is.a.Function();
+			mdl.should.have.property('findByPk').which.is.a.Function();
 			mdl.should.have.property('findOne').which.is.a.Function();
 			// mdl.should.have.property('aggregate').which.is.a.Function();
 			// mdl.should.have.property('count').which.is.a.Function();
@@ -373,14 +373,14 @@ describe('Model', function () {
 		});
 	});
 	
-	describe('#findById', function () {
+	describe('#findByPk', function () {
 		var mdl;
 		beforeEach(function () {
 			mdl = new Model('foo');
 		});
 		
 		it('should find a row with the given id', function (done) {
-			mdl.findById(1234)
+			mdl.findByPk(1234)
 				.fallbackFn().then(function (inst) {
 					inst._args[0].id.should.equal(1234);
 					done();
@@ -389,17 +389,17 @@ describe('Model', function () {
 		
 		it('should not pass along a fallback function if auto fallback is turned off', function () {
 			mdl.options.autoQueryFallback = false;
-			should.not.exist(mdl.findById().fallbackFn);
+			should.not.exist(mdl.findByPk().fallbackFn);
 		});
 		
 		it('should pass query info to the QueryInterface instance', function(done) {
 			mdl.$query = function(options) {
-				options.query.should.equal('findById');
+				options.query.should.equal('findByPk');
 				options.queryOptions.length.should.equal(1);
 				options.queryOptions[0].should.equal(123);
 				done();
 			}
-			mdl.findById(123);
+			mdl.findByPk(123);
 		});
 	});
 	

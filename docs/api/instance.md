@@ -175,6 +175,38 @@ Name | Type | Description
 
 
 
+<a name="getDataValue"></a>
+## getDataValue(key) -> Any
+
+Get plain value
+
+###  Parameters
+
+Name | Type | Description
+--- | --- | ---
+key | String | Key yo get the value for
+
+
+###  Return
+`Any`: 
+
+
+
+<a name="setDataValue"></a>
+## setDataValue(key, value)
+
+Set plain value
+
+###  Parameters
+
+Name | Type | Description
+--- | --- | ---
+key | String | Key yo get the value for
+value | Any | 
+
+
+
+
 <a name="validate"></a>
 ## validate() -> Promise.&#60;ValidationErrorItem|undefined&#62;
 

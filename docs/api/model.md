@@ -227,6 +227,16 @@ No-op that returns the current object
 
 
 
+<a name="addScope"></a>
+## addScope() -> 
+
+No-op that returns a void.
+
+###  Return
+``: 
+
+
+
 <a name="findAll"></a>
 ## findAll([options]) -> Promise.&#60;Array.&#60;Instance&#62;&#62;
 
@@ -306,8 +316,8 @@ Name | Type | Description
 
 
 
-<a name="findById"></a>
-## findById(id) -> Promise.&#60;Instance&#62;
+<a name="findByPk"></a>
+## findByPk(id) -> Promise.&#60;Instance&#62;
 
 Executes a mock query to find an instance with the given ID value. Without any other
 configuration, the default behavior when no queueud query result is present is to
