@@ -323,6 +323,18 @@ describe('Sequelize', function () {
 	});
 	
 	describe('#transaction', function () {
+		it('should allow an options object as the first optional argument', function (done) {
+			var seq = new Sequelize(),
+				count = 0;
+			seq.transaction({}, function () {
+				count++;
+				return Promise.resolve();
+			}).then(function () {
+				count.should.equal(1);
+				done()
+			}).catch(done);
+		});
+
 		it('should run a passed in function', function (done) {
 			var seq = new Sequelize(),
 				count = 0;
