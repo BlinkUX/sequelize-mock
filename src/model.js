@@ -346,7 +346,8 @@ fakeModel.prototype.findAndCountAll =  function (options) {
  * @param {Integer} id ID of the instance
  * @return {Promise<Instance>} Promise that resolves with an instance with the given ID
  **/
-fakeModel.prototype.findById = function (id) {
+fakeModel.prototype.findById =
+fakeModel.prototype.findByPk = function (id) {
 	var self = this;
 	
 	return this.$query({
