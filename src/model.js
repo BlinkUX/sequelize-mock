@@ -463,7 +463,15 @@ fakeModel.prototype.build = function (values, options) {
 	}
 	
 	values = _.extend({}, this._defaults, values);
-	
+	const keys = Object.keys(this.Instance.prototype);
+
+	keys.forEach(key => {
+		if (key.substring(0, 10) === 'getValueOf') {
+			const modelName = Utils.lowercaseFirst(key.split('getValueOf')[1]);
+			values[modelName] = this.Instance.prototype[key]()
+			values[Utils.pluralize(modelName)] = this.Instance.prototype[key]()
+		}
+	})
 	return new this.Instance(values, options);
 };
 /**
@@ -630,9 +638,11 @@ fakeModel.prototype.belongsTo = fakeModel.prototype.hasOne = function (item, opt
 		self = this,
 		noop = function () { return Promise.resolve(self); };
 	
-	if(isString) {
+	if (isString) {		
 		this.Instance.prototype['get' + singular] = function (opts) { return Promise.resolve(new self.Instance(opts && opts.where ? opts.where : opts)); };
+		this.Instance.prototype['getValueOf' + singular] = () => new self.Instance(opts && opts.where ? opts.where : opts);
 	} else {
+		this.Instance.prototype['getValueOf' + singular] = () => item._defaults;
 		this.Instance.prototype['get' + singular] = item.findOne.bind(item);
 	}
 	this.Instance.prototype['set' + singular] = noop;
