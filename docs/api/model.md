@@ -306,8 +306,8 @@ Name | Type | Description
 
 
 
-<a name="findById"></a>
-## findById(id) -> Promise.&#60;Instance&#62;
+<a name="findByPk"></a>
+## findBfindByPkyId(id) -> Promise.&#60;Instance&#62;
 
 Executes a mock query to find an instance with the given ID value. Without any other
 configuration, the default behavior when no queueud query result is present is to

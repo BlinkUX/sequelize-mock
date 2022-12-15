@@ -98,7 +98,7 @@ User.$useHandler(function(query, queryOptions, done) {
 	if (query === "findOne") return User.build({id: 1});
 });
 User.$useHandler(function(query, queryOptions, done) {
-	if (query === "findById") return User.build({id: queryOptions[0]});
+	if (query === "findByPk") return User.build({id: queryOptions[0]});
 });
 User.$useHandler(function(query, queryOptions, done) {
 	if (query === "findOrCreate") return User.build({id:1000});
@@ -107,7 +107,7 @@ User.$useHandler(function(query, queryOptions, done) {
 User.findOne().then(function (user) {
 	user.get('id'); // === 1
 });
-User.findById(123).then(function (user) {
+User.findByPk(123).then(function (user) {
 	user.get('id'); // === 123
 });
 User.findOrCreate().then(function (user) {
