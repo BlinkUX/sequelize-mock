@@ -167,6 +167,7 @@ describe('Model', function () {
 			mdl.should.have.property('findAll').which.is.a.Function();
 			mdl.should.have.property('findAndCount').which.is.a.Function();
 			mdl.should.have.property('findAndCountAll').which.is.a.Function();
+			mdl.should.have.property("count").which.is.a.Function();
 			mdl.should.have.property('findByPk').which.is.a.Function();
 			mdl.should.have.property('findOne').which.is.a.Function();
 			// mdl.should.have.property('aggregate').which.is.a.Function();
@@ -652,6 +653,56 @@ describe('Model', function () {
 				done();
 			}
 			mdl.findAndCountAll(queryOptions)
+		});
+	});
+
+	describe("#Count", function() {
+		let mdl
+		beforeEach(function() {
+			mdl = new Model("foo");
+		});
+
+		it("should pass along where value to Instance creation", function(done) {
+			var options = {
+				where: {
+					foo: "bar"
+				}
+			};
+
+			mdl.count(options)
+				.fallbackFn()
+				.then(function(result) {
+					result.should.equal(1);
+					done();
+				})
+				.catch(done);
+		});
+
+		it("should still find results if there is not options", function(done) {
+			mdl.count()
+				.fallbackFn()
+				.then(function(result) {
+					result.should.equal(1);
+					done();
+				})
+				.catch(done);
+		});
+
+		it("should not pass along a fallback function if auto fallback is turned off", function() {
+			mdl.options.autoQueryFallback = false;
+			should.not.exist(mdl.count().fallbackFn);
+		});
+
+		it("should pass query info to the QueryInterface instance", function(done) {
+			var queryOptions = {};
+
+			mdl.$query = function(options) {
+				options.query.should.equal("count");
+				options.queryOptions.length.should.equal(1);
+				options.queryOptions[0].should.equal(queryOptions);
+				done();
+			};
+			mdl.count(queryOptions);
 		});
 	});
 
