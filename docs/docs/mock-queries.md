@@ -158,7 +158,7 @@ Some functions require additional parameters or configuration. You can specify b
 ```javascript
 User.$queueResult( User.build(), { wasCreated: true } );
 
-User.findOrCreate().spread(function (user, wasCreated) {
+User.findOrCreate().then(function ([user, wasCreated]) {
 	wasCreated; // === true
 });
 ```

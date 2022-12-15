@@ -80,7 +80,7 @@ UserMock.findOne().then(function (result) {
 UserMock.$queueResult(UserMock.build(), { wasCreated: false });
 UserMock.findOrCreate({
 	// ...
-}).spread(function (user, created) {
+}).then(function ([user, created]) {
 	// created == false
 });
 ```

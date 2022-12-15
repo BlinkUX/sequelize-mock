@@ -24,8 +24,7 @@
  * @fileOverview Instances of Models created by Model function calls.
  */
 
-var bluebird = require('bluebird'),
-	_ = require('lodash'),
+var _ = require('lodash'),
 	Errors = require('./errors');
 
 var id = 0;
@@ -206,24 +205,6 @@ fakeModelInstance.prototype.get = function (key) {
 };
 
 /**
- * Get plain value
- * @param {String} key Key yo get the value for
- * @return {Any}
- */
-fakeModelInstance.prototype.getDataValue = function (key) {
-    return this._values[key];
-};
-
-/**
- * Set plain value
- * @param {String} key Key yo get the value for
- * @param {Any} value
- */
-fakeModelInstance.prototype.setDataValue = function (key, value) {
-    this._values[key] = value;
-};
-
-/**
  * Triggers validation. If there are errors added through `$addValidationError` they will
  * be returned and the queue of validation errors will be cleared.
  * 
@@ -250,7 +231,7 @@ fakeModelInstance.prototype.validate = function () {
 		this.$clearValidationErrors();
 	}
 	
-	return bluebird.resolve(validationError);
+	return Promise.resolve(validationError);
 };
 
 /**
@@ -279,7 +260,7 @@ fakeModelInstance.prototype.save = function () {
  **/
 fakeModelInstance.prototype.destroy = function () {
 	this._values.deletedAt = new Date();
-	return bluebird.resolve();
+	return Promise.resolve();
 };
 
 /**
@@ -289,7 +270,7 @@ fakeModelInstance.prototype.destroy = function () {
  * @return {Promise<Instance>} will always resolve with the current instance
  **/
 fakeModelInstance.prototype.reload = function () {
-	return bluebird.resolve(this);
+	return Promise.resolve(this);
 };
 
 /**

@@ -10,8 +10,7 @@
  * @fileOverview The base mock Model object for use in tests
  */
 
-var Promise = require('bluebird'),
-	_ = require('lodash'),
+var _ = require('lodash'),
 	nodeutil = require('util'),
 	Utils = require('./utils'),
 	Instance = require('./instance'),
@@ -127,7 +126,7 @@ function fakeModel (name, defaults, opts) {
 	 * UserMock.$queueResult(UserMock.build(), { wasCreated: false });
 	 * UserMock.findOrCreate({
 	 * 	// ...
-	 * }).spread(function (user, created) {
+	 * }).then(function ([user, created]) {
 	 * 	// created == false
 	 * });
 	 * 
@@ -238,14 +237,6 @@ fakeModel.prototype.unscoped =
 fakeModel.prototype.scope = function () {
 	return this;
 };
-
-/**
- * No-op that returns a void.
- * 
- * @instance
- * @return {undefined}
- **/
-fakeModel.prototype.addScope = function () {};
 
 /**
  * Executes a mock query to find all of the instances with any provided options. Without
@@ -525,7 +516,7 @@ fakeModel.prototype.upsert = function (values) {
 		query: "upsert",
 		queryOptions: arguments,
 		fallbackFn: !this.options.autoQueryFallback ? null : function () {
-			return self.build(values).save().return(self.options.createdDefault);
+			return self.build(values).save().then((()=>self.options.createdDefault))
 		},
 	});
 }

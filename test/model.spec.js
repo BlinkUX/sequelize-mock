@@ -1,11 +1,10 @@
 'use strict';
 
 var should = require('should');
-var bluebird = require('bluebird');
 var proxyquire = require('proxyquire').noCallThru();
 
 var InstanceMock = function () { this._args = arguments; };
-InstanceMock.prototype.save = function () { return bluebird.resolve(this); };
+InstanceMock.prototype.save = function () { return Promise.resolve(this); };
 
 var UtilsMock = {
 	uppercaseFirst: function (str) { return str; },
@@ -162,7 +161,7 @@ describe('Model', function () {
 			// mdl.should.have.property('schema').which.is.a.Function();
 			mdl.should.have.property('getTableName').which.is.a.Function();
 			mdl.should.have.property('unscoped').which.is.a.Function();
-			mdl.should.have.property('addScope').which.is.a.Function();
+			// mdl.should.have.property('addScope').which.is.a.Function();
 			mdl.should.have.property('scope').which.is.a.Function();
 			mdl.should.have.property('find').which.is.a.Function();
 			mdl.should.have.property('findAll').which.is.a.Function();
@@ -209,7 +208,7 @@ describe('Model', function () {
 		});
 		
 		it('should return a promise', function () {
-			mdl.sync().should.be.instanceOf(bluebird);
+			mdl.sync().should.be.instanceOf(Promise);
 		});
 	});
 	
@@ -220,7 +219,7 @@ describe('Model', function () {
 		});
 		
 		it('should return a promise', function () {
-			mdl.drop().should.be.instanceOf(bluebird);
+			mdl.drop().should.be.instanceOf(Promise);
 		});
 	});
 	
@@ -283,7 +282,7 @@ describe('Model', function () {
 				'baz' : 'bin'
 			};
 			
-			mdl.update(vals).fallbackFn().spread(function (number, rows) {
+			mdl.update(vals).fallbackFn().then(function ([number, rows]) {
 				number.should.equal(1);
 				done();
 			}).catch(done);
@@ -295,7 +294,7 @@ describe('Model', function () {
 			};
 			
 			mdl.update(vals, {returning: true})
-				.fallbackFn().spread(function (number, rows) {
+				.fallbackFn().then(function ([number, rows]) {
 					rows.should.be.Array();
 					rows[0]._args[0].should.have.property('baz').which.is.exactly('bin');
 					done();
@@ -483,7 +482,7 @@ describe('Model', function () {
 			};
 			
 			mdl.findOrCreate(options)
-				.fallbackFn().spread(function (inst, created) {
+				.fallbackFn().then(function ([inst, created]) {
 					inst._args[0].should.have.property('foo').which.is.exactly('bar');
 					done();
 				}).catch(done);
@@ -491,7 +490,7 @@ describe('Model', function () {
 		
 		it('should return the createdDefault value for the model', function (done) {
 			mdl.findOrCreate({})
-				.fallbackFn().spread(function (inst, created) {
+				.fallbackFn().then(function ([inst, created]) {
 					created.should.equal(mdl.options.createdDefault);
 					done();
 				}).catch(done);

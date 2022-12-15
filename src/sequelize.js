@@ -9,7 +9,6 @@
 
 var path = require('path'),
 	_ = require('lodash'),
-	bluebird = require('bluebird'),
 	Model = require('./model'),
 	Instance = require('./instance'),
 	Utils = require('./utils'),
@@ -102,11 +101,11 @@ Sequelize.prototype.Sequelize = Sequelize;
 Sequelize.prototype.Utils = Sequelize.Utils = Utils;
 
 /**
- * Reference to the bluebird promise library
+ * Reference to the Promise library
  * 
  * @property
  **/
-Sequelize.prototype.Promise = Sequelize.Promise = bluebird;
+Sequelize.prototype.Promise = Sequelize.Promise = Promise;
 
 /**
  * Object containing all of the [Sequelize QueryTypes](https://github.com/sequelize/sequelize/blob/3e5b8772ef75169685fc96024366bca9958fee63/lib/query-types.js).
@@ -334,13 +333,8 @@ Sequelize.prototype.import = function (importPath) {
 		importPath = path.resolve(callLoc, importPath);
 	}
 	
-	if(this.importCache[importPath] === 'string' || !this.importCache[importPath]) {		
-		var defineCall = arguments.length > 1 ? arguments[1] : require(importPath);
-		if(typeof defineCall === 'object') {
-			// ES6 module compatibility
-			defineCall = defineCall.default;
-		}
-		this.importCache[importPath] = defineCall(this, DataTypes);
+	if(this.importCache[importPath] === 'string' || !this.importCache[importPath]) {
+		this.importCache[importPath] = require(importPath)(this, DataTypes);
 	}
 	
 	return this.importCache[importPath];
@@ -385,10 +379,10 @@ Sequelize.prototype.query = function () {
 Sequelize.prototype.transaction = function (fn) {
 	if(!fn) {
 		fn = function (t) {
-			return bluebird.resolve(t);
+			return Promise.resolve(t);
 		};
 	}
-	return new bluebird(function (resolve, reject) {
+	return new Promise(function (resolve, reject) {
 		// TODO Return mock transaction object
 		return fn({}).then(resolve, reject);
 	});
@@ -410,7 +404,7 @@ Sequelize.prototype.literal = function (arg) {
  * @return {Promise} will always resolve as a successful authentication
  */
 Sequelize.prototype.authenticate = function() {
-	return new bluebird(function (resolve) {
+	return new Promise(function (resolve) {
 		return resolve();
 	});
 };

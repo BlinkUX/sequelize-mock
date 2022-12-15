@@ -71,7 +71,7 @@ Reference to the Util functions
 <a name="Promise"></a>
 ## Promise
 
-Reference to the bluebird promise library
+Reference to the Promise library
 
 
 
