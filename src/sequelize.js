@@ -376,15 +376,19 @@ Sequelize.prototype.query = function () {
  * @param {Function} [fn] Optional function to run as a tranasction
  * @return {Promise} Promise that resolves the code is successfully run, otherwise it is rejected
  */
-Sequelize.prototype.transaction = function (fn) {
-	if(!fn) {
-		fn = function (t) {
+Sequelize.prototype.transaction = function (options, autoCallback) {
+	if (typeof options === 'function') {
+		autoCallback = options;
+		options = undefined;
+	}
+	if(!autoCallback) {
+		autoCallback = function (t) {
 			return Promise.resolve(t);
 		};
 	}
 	return new Promise(function (resolve, reject) {
 		// TODO Return mock transaction object
-		return fn({}).then(resolve, reject);
+		return autoCallback({}).then(resolve, reject);
 	});
 };
 
