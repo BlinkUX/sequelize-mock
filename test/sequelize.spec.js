@@ -320,7 +320,7 @@ describe('Sequelize', function () {
 				done()
 			}).catch(done);
 		});
-		
+
 		it('should run a passed in function', function (done) {
 			var seq = new Sequelize(),
 				count = 0;
@@ -342,6 +342,20 @@ describe('Sequelize', function () {
 		});
 	});
 	
+	describe('#fn', function () {
+		it('should simply return the function for the fn function', function () {
+			var seq = new Sequelize();
+			seq.fn('Test', ['string', 123]).toString().should.equal('Test("string", 123)');
+		});
+	});
+
+	describe('#col', function () {
+		it('should simply return the argument for the col function', function () {
+			var seq = new Sequelize();
+			seq.col('Test').toString().should.equal('Test');
+		});
+	});
+
 	describe('#literal', function () {
 		it('should simply return the argument for the literal function', function () {
 			var seq = new Sequelize();
