@@ -1,7 +1,6 @@
 'use strict';
 
 var should = require('should');
-var bluebird = require('bluebird');
 var proxyquire = require('proxyquire').noCallThru();
 var util = require('util');
 
@@ -348,7 +347,7 @@ describe('QueryInterface', function () {
 		
 		it('should return the promise of the handler', function(done) {
 			qi.$useHandler(function(query, options) {
-				return bluebird.resolve('handler value');
+				return Promise.resolve('handler value');
 			});
 			qi.$query().then(function(value) {
 				value.should.equal('handler value');
@@ -358,7 +357,7 @@ describe('QueryInterface', function () {
 
 		it('should respect rejected promises returned from handler', function(done) {
 			qi.$useHandler(function(query, options) {
-				return bluebird.reject('error');
+				return Promise.reject('error');
 			});
 			qi.$query().catch(function(error) {
 				error.should.equal('error');
@@ -368,7 +367,7 @@ describe('QueryInterface', function () {
 		
 		it('should return a promise even if the value is undefined', function(done) {
 			qi.$useHandler(function(query, options) {
-				return bluebird.resolve(undefined);
+				return Promise.resolve(undefined);
 			});
 			qi.$query().then(function(value) {
 				(typeof target).should.be.equal('undefined');
@@ -390,7 +389,7 @@ describe('QueryInterface', function () {
 		
 		it('should work with async handlers', function(done) {
 			qi.$useHandler(function(query, options) {
-				return new bluebird(function(resolve, reject) {
+				return new Promise(function(resolve, reject) {
 					resolve('done');
 				});
 			});
@@ -486,7 +485,7 @@ describe('QueryInterface', function () {
 				}];
 				
 				var result = qi.$query({ includeCreated: true });
-				result.spread(function (content, created) {
+				result.then(function ([content, created]) {
 					content.should.equal('foo');
 					created.should.be.true();
 					done();
@@ -502,7 +501,7 @@ describe('QueryInterface', function () {
 				}];
 				
 				var result = qi.$query({ includeCreated: true });
-				result.spread(function (content, created) {
+				result.then(function ([content, created]) {
 					content.should.equal('foo');
 					created.should.be.false();
 					done();
@@ -522,11 +521,11 @@ describe('QueryInterface', function () {
 				}];
 				
 				var result = qi.$query({ includeCreated: true });
-				result.spread(function (content, created) {
+				result.then(function ([content, created]) {
 					content.should.equal('foo');
 					created.should.be.true();
 					return qi.$query({ includeCreated: true });
-				}).spread(function (content, created) {
+				}).then(function ([content, created]) {
 					content.should.equal('bar');
 					created.should.be.false();
 					done();
@@ -550,7 +549,7 @@ describe('QueryInterface', function () {
 				}];
 				
 				var result = qi.$query({ includeAffectedRows: true });
-				result.spread(function (content, affectedRows) {
+				result.then(function ([content, affectedRows]) {
 					content.should.equal('foo');
 					affectedRows.should.be.an.Array();
 					affectedRows.length.should.equal(0);
@@ -567,7 +566,7 @@ describe('QueryInterface', function () {
 				}];
 				
 				var result = qi.$query({ includeAffectedRows: true });
-				result.spread(function (content, affectedRows) {
+				result.then(function ([content, affectedRows]) {
 					content.should.equal('foo');
 					affectedRows.should.equal(rows);
 					done();

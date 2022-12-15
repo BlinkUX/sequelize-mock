@@ -1,7 +1,6 @@
 'use strict';
 
 var should = require('should');
-var bluebird = require('bluebird');
 var proxyquire = require('proxyquire').noCallThru();
 
 var ModelMock = function () {};
@@ -39,7 +38,6 @@ var Sequelize = proxyquire('../src/sequelize', {
 	'./data-types'     : function () {},
 	
 	'import-test'      : importTestFunc,
-	'import-test-es6'  : { default: importTestFunc },
 });
 
 describe('Sequelize', function () {
@@ -48,14 +46,14 @@ describe('Sequelize', function () {
 		Sequelize.should.have.property('version').which.is.equal('test');
 		Sequelize.should.have.property('options');
 		Sequelize.should.have.property('Utils').which.is.equal(UtilsMock);
-		Sequelize.should.have.property('Promise').which.is.equal(bluebird);
+		Sequelize.should.have.property('Promise').which.is.equal(Promise);
 		Sequelize.should.have.property('Model').which.is.equal(ModelMock);
 	});
 	
 	it('should have top level constants on instances of class', function () {
 		var seq = new Sequelize();
 		seq.should.have.property('Utils').which.is.equal(UtilsMock);
-		seq.should.have.property('Promise').which.is.equal(bluebird);
+		seq.should.have.property('Promise').which.is.equal(Promise);
 		seq.should.have.property('Model').which.is.equal(ModelMock);
 	});
 	
@@ -273,18 +271,6 @@ describe('Sequelize', function () {
 			};
 			seq.import('foo').should.be.exactly(findItem);
 		});
-
-		it('should import an es6 model from the given path', function () {
-			seq.import('import-test-es6');
-			should(lastImportTestCall).not.be.Null();
-			lastImportTestCall[0].should.be.exactly(seq);
-		});
-
-		it('should import a model function as the second argument (for meteor compatibility)', function () {
-			seq.import('import-test', importTestFunc);
-			should(lastImportTestCall).not.be.Null();
-			lastImportTestCall[0].should.be.exactly(seq);
-		});
 	});
 	
 	describe('#model', function() {
@@ -323,6 +309,18 @@ describe('Sequelize', function () {
 	});
 	
 	describe('#transaction', function () {
+		it('should allow an options object as the first optional argument', function (done) {
+			var seq = new Sequelize(),
+				count = 0;
+			seq.transaction({}, function () {
+				count++;
+				return Promise.resolve();
+			}).then(function () {
+				count.should.equal(1);
+				done()
+			}).catch(done);
+		});
+
 		it('should run a passed in function', function (done) {
 			var seq = new Sequelize(),
 				count = 0;
@@ -344,6 +342,20 @@ describe('Sequelize', function () {
 		});
 	});
 	
+	describe('#fn', function () {
+		it('should simply return the function for the fn function', function () {
+			var seq = new Sequelize();
+			seq.fn('Test', ['string', 123]).toString().should.equal('Test("string", 123)');
+		});
+	});
+
+	describe('#col', function () {
+		it('should simply return the argument for the col function', function () {
+			var seq = new Sequelize();
+			seq.col('Test').toString().should.equal('Test');
+		});
+	});
+
 	describe('#literal', function () {
 		it('should simply return the argument for the literal function', function () {
 			var seq = new Sequelize();

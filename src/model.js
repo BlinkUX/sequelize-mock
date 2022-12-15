@@ -10,8 +10,7 @@
  * @fileOverview The base mock Model object for use in tests
  */
 
-var Promise = require('bluebird'),
-	_ = require('lodash'),
+var _ = require('lodash'),
 	nodeutil = require('util'),
 	Utils = require('./utils'),
 	Instance = require('./instance'),
@@ -127,7 +126,7 @@ function fakeModel (name, defaults, opts) {
 	 * UserMock.$queueResult(UserMock.build(), { wasCreated: false });
 	 * UserMock.findOrCreate({
 	 * 	// ...
-	 * }).spread(function (user, created) {
+	 * }).then(function ([user, created]) {
 	 * 	// created == false
 	 * });
 	 * 
@@ -240,14 +239,6 @@ fakeModel.prototype.scope = function () {
 };
 
 /**
- * No-op that returns a void.
- * 
- * @instance
- * @return {undefined}
- **/
-fakeModel.prototype.addScope = function () {};
-
-/**
  * Executes a mock query to find all of the instances with any provided options. Without
  * any other configuration, the default behavior when no queueud query result is present
  * is to create an array of a single result based on the where query in the options and
@@ -346,11 +337,11 @@ fakeModel.prototype.findAndCountAll =  function (options) {
  * @param {Integer} id ID of the instance
  * @return {Promise<Instance>} Promise that resolves with an instance with the given ID
  **/
-fakeModel.prototype.findById = function (id) {
+fakeModel.prototype.findByPk = function (id) {
 	var self = this;
 	
 	return this.$query({
-		query: "findById",
+		query: "findByPk",
 		queryOptions: arguments,
 		fallbackFn: !this.options.autoQueryFallback ? null : function () {
 			return Promise.resolve( self.build({ id: id }) );
@@ -394,6 +385,53 @@ fakeModel.prototype.findOne = function (obj) {
 		},
 	});
 };
+
+
+/**
+ * Executes a mock query to count all of the instances with any provided options.
+ *  Without any other configuration, the default behavior when no queueud query result
+ * is present is to create result with the value 1 wrapped in promise.
+ *
+ * To turn off this behavior, the `$autoQueryFallback` option on the model should be set
+ * to `false`.
+ *
+ * @example
+ * // This is an example of the default behavior with no queued results
+ * // If there is a queued result or failure, that will be returned instead
+ * User.count({
+ * 	where: {
+ * 		email: 'myEmail@example.com',
+ * 	},
+ * }).then(function (count) {
+ * 	// count returns the actual value
+ * count == 1; // true
+ * });
+ *
+ * @instance
+ * @method count
+ * @param {Object} [options] Options for the count query
+ * @param {Object} [options.where] Values that any automatically created Instances should have
+ * @return {Promise<Object>} result returned by the mock query
+ **/
+fakeModel.prototype.count = function(options) {
+	var self = this;
+
+	return this.$query({
+		query: "count",
+		queryOptions: arguments,
+		fallbackFn: !this.options.autoQueryFallback
+			? null
+			: function() {
+					return Promise.resolve([
+						self.build(options ? options.where : {})
+					]).then(function(result) {
+						return Promise.resolve(result.length);
+					});
+			  }
+	});
+};
+
+
 
 /**
  * Executes a mock query to find the max value of a field. Without any other
@@ -525,7 +563,7 @@ fakeModel.prototype.upsert = function (values) {
 		query: "upsert",
 		queryOptions: arguments,
 		fallbackFn: !this.options.autoQueryFallback ? null : function () {
-			return self.build(values).save().return(self.options.createdDefault);
+			return self.build(values).save().then((()=>self.options.createdDefault))
 		},
 	});
 }

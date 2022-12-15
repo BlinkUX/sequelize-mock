@@ -1,11 +1,10 @@
 'use strict';
 
 var should = require('should');
-var bluebird = require('bluebird');
 var proxyquire = require('proxyquire').noCallThru();
 
 var InstanceMock = function () { this._args = arguments; };
-InstanceMock.prototype.save = function () { return bluebird.resolve(this); };
+InstanceMock.prototype.save = function () { return Promise.resolve(this); };
 
 var UtilsMock = {
 	uppercaseFirst: function (str) { return str; },
@@ -162,13 +161,14 @@ describe('Model', function () {
 			// mdl.should.have.property('schema').which.is.a.Function();
 			mdl.should.have.property('getTableName').which.is.a.Function();
 			mdl.should.have.property('unscoped').which.is.a.Function();
-			mdl.should.have.property('addScope').which.is.a.Function();
+			// mdl.should.have.property('addScope').which.is.a.Function();
 			mdl.should.have.property('scope').which.is.a.Function();
 			mdl.should.have.property('find').which.is.a.Function();
 			mdl.should.have.property('findAll').which.is.a.Function();
 			mdl.should.have.property('findAndCount').which.is.a.Function();
 			mdl.should.have.property('findAndCountAll').which.is.a.Function();
-			mdl.should.have.property('findById').which.is.a.Function();
+			mdl.should.have.property("count").which.is.a.Function();
+			mdl.should.have.property('findByPk').which.is.a.Function();
 			mdl.should.have.property('findOne').which.is.a.Function();
 			// mdl.should.have.property('aggregate').which.is.a.Function();
 			// mdl.should.have.property('count').which.is.a.Function();
@@ -209,7 +209,7 @@ describe('Model', function () {
 		});
 		
 		it('should return a promise', function () {
-			mdl.sync().should.be.instanceOf(bluebird);
+			mdl.sync().should.be.instanceOf(Promise);
 		});
 	});
 	
@@ -220,7 +220,7 @@ describe('Model', function () {
 		});
 		
 		it('should return a promise', function () {
-			mdl.drop().should.be.instanceOf(bluebird);
+			mdl.drop().should.be.instanceOf(Promise);
 		});
 	});
 	
@@ -283,7 +283,7 @@ describe('Model', function () {
 				'baz' : 'bin'
 			};
 			
-			mdl.update(vals).fallbackFn().spread(function (number, rows) {
+			mdl.update(vals).fallbackFn().then(function ([number, rows]) {
 				number.should.equal(1);
 				done();
 			}).catch(done);
@@ -295,7 +295,7 @@ describe('Model', function () {
 			};
 			
 			mdl.update(vals, {returning: true})
-				.fallbackFn().spread(function (number, rows) {
+				.fallbackFn().then(function ([number, rows]) {
 					rows.should.be.Array();
 					rows[0]._args[0].should.have.property('baz').which.is.exactly('bin');
 					done();
@@ -373,14 +373,14 @@ describe('Model', function () {
 		});
 	});
 	
-	describe('#findById', function () {
+	describe('#findByPk', function () {
 		var mdl;
 		beforeEach(function () {
 			mdl = new Model('foo');
 		});
 		
 		it('should find a row with the given id', function (done) {
-			mdl.findById(1234)
+			mdl.findByPk(1234)
 				.fallbackFn().then(function (inst) {
 					inst._args[0].id.should.equal(1234);
 					done();
@@ -389,17 +389,17 @@ describe('Model', function () {
 		
 		it('should not pass along a fallback function if auto fallback is turned off', function () {
 			mdl.options.autoQueryFallback = false;
-			should.not.exist(mdl.findById().fallbackFn);
+			should.not.exist(mdl.findByPk().fallbackFn);
 		});
 		
 		it('should pass query info to the QueryInterface instance', function(done) {
 			mdl.$query = function(options) {
-				options.query.should.equal('findById');
+				options.query.should.equal('findByPk');
 				options.queryOptions.length.should.equal(1);
 				options.queryOptions[0].should.equal(123);
 				done();
 			}
-			mdl.findById(123);
+			mdl.findByPk(123);
 		});
 	});
 	
@@ -483,7 +483,7 @@ describe('Model', function () {
 			};
 			
 			mdl.findOrCreate(options)
-				.fallbackFn().spread(function (inst, created) {
+				.fallbackFn().then(function ([inst, created]) {
 					inst._args[0].should.have.property('foo').which.is.exactly('bar');
 					done();
 				}).catch(done);
@@ -491,7 +491,7 @@ describe('Model', function () {
 		
 		it('should return the createdDefault value for the model', function (done) {
 			mdl.findOrCreate({})
-				.fallbackFn().spread(function (inst, created) {
+				.fallbackFn().then(function ([inst, created]) {
 					created.should.equal(mdl.options.createdDefault);
 					done();
 				}).catch(done);
@@ -653,6 +653,56 @@ describe('Model', function () {
 				done();
 			}
 			mdl.findAndCountAll(queryOptions)
+		});
+	});
+
+	describe("#Count", function() {
+		let mdl
+		beforeEach(function() {
+			mdl = new Model("foo");
+		});
+
+		it("should pass along where value to Instance creation", function(done) {
+			var options = {
+				where: {
+					foo: "bar"
+				}
+			};
+
+			mdl.count(options)
+				.fallbackFn()
+				.then(function(result) {
+					result.should.equal(1);
+					done();
+				})
+				.catch(done);
+		});
+
+		it("should still find results if there is not options", function(done) {
+			mdl.count()
+				.fallbackFn()
+				.then(function(result) {
+					result.should.equal(1);
+					done();
+				})
+				.catch(done);
+		});
+
+		it("should not pass along a fallback function if auto fallback is turned off", function() {
+			mdl.options.autoQueryFallback = false;
+			should.not.exist(mdl.count().fallbackFn);
+		});
+
+		it("should pass query info to the QueryInterface instance", function(done) {
+			var queryOptions = {};
+
+			mdl.$query = function(options) {
+				options.query.should.equal("count");
+				options.queryOptions.length.should.equal(1);
+				options.queryOptions[0].should.equal(queryOptions);
+				done();
+			};
+			mdl.count(queryOptions);
 		});
 	});
 

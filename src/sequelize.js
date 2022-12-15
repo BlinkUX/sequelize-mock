@@ -9,13 +9,40 @@
 
 var path = require('path'),
 	_ = require('lodash'),
-	bluebird = require('bluebird'),
 	Model = require('./model'),
 	Instance = require('./instance'),
 	Utils = require('./utils'),
 	Errors = require('./errors'),
 	DataTypes = require('./data-types')({}),
 	QueryInterface = require('./queryinterface');
+
+/**
+ * Col object
+ * @class
+ * @param {String} val
+ */
+function Col(val) {
+    this.toString = function() {
+        return val;
+    };
+};
+
+/**
+ * Fn object
+ * @class
+ * @param {String} val
+ * @param {any[]} [args]
+ */
+function Fn(val, args) {
+    if (typeof args === 'undefined') {
+        args = [];
+    }
+
+    this.toString = function() {
+        return val + '(' + _.map(args, JSON.stringify).join(', ') + ')';
+    };
+};
+
 
 /**
  * Sequelize Mock Object. This can be initialize much the same way that Sequelize itself
@@ -88,6 +115,43 @@ Sequelize.version = require('../package.json').version;
 Sequelize.options = {hooks: {}};
 
 /**
+ * Creates an object which represents a column in the DB, this allows referencing another column in your query. This is often useful in conjunction with `sequelize.fn`, since raw string arguments to fn will be escaped.
+ * @method col
+ * @memberof Sequelize
+ * @param {String} col The name of the column
+ * @return {Col}
+ */
+Sequelize.col = function(val) {
+    return new Col(val);
+}
+
+/**
+ *  Creates an object representing a database function. This can be used in search queries, both in where and order parts, and as default values in column definitions.
+ * If you want to refer to columns in your function, you should use `sequelize.col`, so that the columns are properly interpreted as columns and not a strings.
+ *
+ * @method fn
+ * @memberof Sequelize
+ * @param {String} fn The function you want to call
+ * @param {any[]} args All further arguments will be passed as arguments to the function
+ * @return {Fn}
+ */
+Sequelize.fn = function(val, args) {
+    return new Fn(val, args);
+}
+
+/**
+ * Creates an object representing a literal, i.e. something that will not be escaped.
+ *
+ * @method literal
+ * @memberof Sequelize
+ * @param {any} val
+ * @return {String}
+ */
+Sequelize.literal = function(val) {
+    return val;
+}
+
+/**
  * Reference to the mock Sequelize class
  * 
  * @property
@@ -102,11 +166,11 @@ Sequelize.prototype.Sequelize = Sequelize;
 Sequelize.prototype.Utils = Sequelize.Utils = Utils;
 
 /**
- * Reference to the bluebird promise library
+ * Reference to the Promise library
  * 
  * @property
  **/
-Sequelize.prototype.Promise = Sequelize.Promise = bluebird;
+Sequelize.prototype.Promise = Sequelize.Promise = Promise;
 
 /**
  * Object containing all of the [Sequelize QueryTypes](https://github.com/sequelize/sequelize/blob/3e5b8772ef75169685fc96024366bca9958fee63/lib/query-types.js).
@@ -334,13 +398,8 @@ Sequelize.prototype.import = function (importPath) {
 		importPath = path.resolve(callLoc, importPath);
 	}
 	
-	if(this.importCache[importPath] === 'string' || !this.importCache[importPath]) {		
-		var defineCall = arguments.length > 1 ? arguments[1] : require(importPath);
-		if(typeof defineCall === 'object') {
-			// ES6 module compatibility
-			defineCall = defineCall.default;
-		}
-		this.importCache[importPath] = defineCall(this, DataTypes);
+	if(this.importCache[importPath] === 'string' || !this.importCache[importPath]) {
+		this.importCache[importPath] = require(importPath)(this, DataTypes);
 	}
 	
 	return this.importCache[importPath];
@@ -382,26 +441,20 @@ Sequelize.prototype.query = function () {
  * @param {Function} [fn] Optional function to run as a tranasction
  * @return {Promise} Promise that resolves the code is successfully run, otherwise it is rejected
  */
-Sequelize.prototype.transaction = function (fn) {
-	if(!fn) {
-		fn = function (t) {
-			return bluebird.resolve(t);
+Sequelize.prototype.transaction = function (options, autoCallback) {
+	if (typeof options === 'function') {
+		autoCallback = options;
+		options = undefined;
+	}
+	if(!autoCallback) {
+		autoCallback = function (t) {
+			return Promise.resolve(t);
 		};
 	}
-	return new bluebird(function (resolve, reject) {
+	return new Promise(function (resolve, reject) {
 		// TODO Return mock transaction object
-		return fn({}).then(resolve, reject);
+		return autoCallback({}).then(resolve, reject);
 	});
-};
-
-/**
- * Simply returns the first argument passed in, unmodified.
- * 
- * @param {Any} arg Value to return
- * @return {Any} value passed in
- */
-Sequelize.prototype.literal = function (arg) {
-	return arg;
 };
 
 /**
@@ -410,9 +463,14 @@ Sequelize.prototype.literal = function (arg) {
  * @return {Promise} will always resolve as a successful authentication
  */
 Sequelize.prototype.authenticate = function() {
-	return new bluebird(function (resolve) {
+	return new Promise(function (resolve) {
 		return resolve();
 	});
 };
+
+// Aliases
+Sequelize.prototype.fn = Sequelize.fn;
+Sequelize.prototype.col = Sequelize.col;
+Sequelize.prototype.literal = Sequelize.asIs = Sequelize.prototype.asIs = Sequelize.literal;
 
 module.exports = Sequelize;
