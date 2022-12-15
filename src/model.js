@@ -337,11 +337,11 @@ fakeModel.prototype.findAndCountAll =  function (options) {
  * @param {Integer} id ID of the instance
  * @return {Promise<Instance>} Promise that resolves with an instance with the given ID
  **/
-fakeModel.prototype.findById = function (id) {
+fakeModel.prototype.findByPk = function (id) {
 	var self = this;
 	
 	return this.$query({
-		query: "findById",
+		query: "findByPk",
 		queryOptions: arguments,
 		fallbackFn: !this.options.autoQueryFallback ? null : function () {
 			return Promise.resolve( self.build({ id: id }) );
