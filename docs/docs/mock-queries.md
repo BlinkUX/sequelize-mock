@@ -39,7 +39,7 @@ Option | Type | Description
 
 ## Query handlers
 
-Query results can be generated using query handlers. When multiple handlers are added to the QueryInterface, they will be called in order until one of them returns a valud result. If no handler returns a result, then QueryInterface will get the value from the list of queued results.
+Query results can be generated using query handlers. When multiple handlers are added to the QueryInterface, they will be called in order until one of them returns a valid result. If no handler returns a result, then QueryInterface will get the value from the list of queued results.
 
 The handler will receive two arguments
 
@@ -49,9 +49,12 @@ The handler will receive two arguments
 Those arguments can be used to filter the results. For example:
 
 ```javascript
-User.$useHandler(function(query, queryOptions, done) {
+User.$queryInterface.$useHandler(function(query, queryOptions, done) {
+	//this will return
+	//query: 'findOne',
+        //queryOptions: [Arguments] { '0': { [field_your_are_querying]: 'value' } 
 	if (query === 'findOne') {
-		if (queryOptions[0].where.id === 42) {
+		if (queryOptions[0].field === value_you_desire_to_find) {
 			// Result found, return it
 			return User.build({ id: 42, name: 'foo' });
 		} else {
