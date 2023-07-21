@@ -52,6 +52,21 @@ exports.pluralize = function(str) {
 };
 
 /**
+ * Gets the current stack frame
+ * 
+ **/
+exports.stack = function () {
+	// Stash original stack prep
+	var prepareStackTrace = Error.prepareStackTrace;
+	Error.prepareStackTrace = function (_, s) { return s; };
+	var curr = {};
+	Error.captureStackTrace(curr, exports.stack);
+	var stack = curr.stack;
+	Error.prepareStackTrace = prepareStackTrace;
+	return stack;
+};
+
+/**
  * Exposed version of the lodash library
  * 
  * @name lodash

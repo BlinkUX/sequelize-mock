@@ -206,6 +206,24 @@ fakeModelInstance.prototype.get = function (key) {
 };
 
 /**
+ * Get plain value
+ * @param {String} key Key yo get the value for
+ * @return {Any}
+ */
+fakeModelInstance.prototype.getDataValue = function (key) {
+    return this._values[key];
+};
+
+/**
+ * Set plain value
+ * @param {String} key Key yo get the value for
+ * @param {Any} value
+ */
+fakeModelInstance.prototype.setDataValue = function (key, value) {
+    this._values[key] = value;
+};
+
+/**
  * Triggers validation. If there are errors added through `$addValidationError` they will
  * be returned and the queue of validation errors will be cleared.
  * 

@@ -38,6 +38,27 @@ var UserMock = dbMock.define('user', {
 
 ## Swapping Model for Mocks
 
+### Using `Sequelize.import()`
+
+In SequelizeMock, we provide the same `import()` functionality that Sequelize provides, with the added ability to override any given imported path with your mock paths.
+
+Using the `$overrideImport` method, you can simply define a mapping between your model and your mock object.
+
+```javascript
+// If your Sequelize code looks like this
+sequelize.import('./users/model.js');
+
+// Your test code can simply override the import so your code will function as expected
+sequelize.$overrideImport('./users/model.js', './users/mock.js');
+
+// Now an import for your users model will actually import your user mock file instead
+sequelize.import('./users/model.js'); // Will load './users/mock.js' instead
+```
+
+**Note that relative paths are relative to the file calling the `import` function, and not to your test code.**
+
+### Using `require()`
+
 There are a number of libraries out there that can be used to replace `require()` dependencies with mock objects. You can simply use one of these libraries to replace the Sequelize Mock object into your code and it should run exactly as you would expect.
 
 Here is an example of doing so with [proxyquire](https://www.npmjs.com/package/proxyquire)
@@ -54,7 +75,7 @@ var myModule = proxyquire('user.controller', {
 });
 ```
 
-### Some Mock Injection Libraries
+#### Some Mock Injection Libraries
  * [proxyquire](https://www.npmjs.com/package/proxyquire)
  * [mockery](https://www.npmjs.com/package/mockery)
  * [mock-require](https://www.npmjs.com/package/mock-require)

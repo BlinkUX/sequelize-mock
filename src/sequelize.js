@@ -7,12 +7,14 @@
  * @fileOverview Mock class for the base Sequelize class
  */
 
-var _ = require('lodash'),
+var path = require('path'),
+	_ = require('lodash'),
 	bluebird = require('bluebird'),
 	Model = require('./model'),
 	Instance = require('./instance'),
 	Utils = require('./utils'),
 	Errors = require('./errors'),
+	DataTypes = require('./data-types')({}),
 	QueryInterface = require('./queryinterface');
 
 /**
@@ -50,6 +52,14 @@ function Sequelize(database, username, password, options) {
 	this.options = _.extend({
 		dialect: 'mock',
 	}, options || {});
+	
+	/**
+	 * Used to cache and override model imports for easy mock model importing
+	 * 
+	 * @member Sequelize
+	 * @property
+	 **/
+	this.importCache = {};
 	
 	/**
 	 * Models that have been defined in this Sequelize Mock instances
@@ -213,6 +223,17 @@ Sequelize.prototype.$queueQueryClear =
 Sequelize.prototype.$cqq =
 Sequelize.prototype.$qqc = Sequelize.prototype.$clearQueue;
 
+/**
+ * Overrides a path used for import
+ * 
+ * @see {@link import}
+ * @param {String} importPath The original path that import will be called with
+ * @param {String} overridePath The path that should actually be used for resolving. If this path is relative, it will be relative to the file calling the import function
+ **/
+Sequelize.prototype.$overrideImport = function (realPath, mockPath) {
+	this.importCache[realPath] = mockPath;
+};
+
 /* Mock Functionality
  * 
  */
@@ -289,6 +310,43 @@ Sequelize.prototype.isDefined = function (name) {
 };
 
 /**
+ * Imports a given model from the provided file path. Files that are imported should
+ * export a function that accepts two parameters, this sequelize instance, and an object
+ * with all of the available datatypes
+ * 
+ * Before importing any modules, it will remap any paths that were overridden using the
+ * `$overrideImport` test function. This method is most helpful when used to make the
+ * SequelizeMock framework import your mock models instead of the real ones in your test
+ * code.
+ * 
+ * @param {String} path Path of the model to import. Can be relative or absolute
+ * @return {Any} The result of evaluating the imported file's function
+ **/
+Sequelize.prototype.import = function (importPath) {
+	if(typeof this.importCache[importPath] === 'string') {
+		importPath = this.importCache[importPath];
+	}
+	
+	if(path.normalize(importPath) !== path.resolve(importPath)) {
+		// We're relative, and need the calling files location
+		var callLoc = path.dirname(Utils.stack()[1].getFileName());
+		
+		importPath = path.resolve(callLoc, importPath);
+	}
+	
+	if(this.importCache[importPath] === 'string' || !this.importCache[importPath]) {		
+		var defineCall = arguments.length > 1 ? arguments[1] : require(importPath);
+		if(typeof defineCall === 'object') {
+			// ES6 module compatibility
+			defineCall = defineCall.default;
+		}
+		this.importCache[importPath] = defineCall(this, DataTypes);
+	}
+	
+	return this.importCache[importPath];
+};
+
+/**
  * Fetch a Model which is already defined.
  * 
  * Uses the `.models` property for lookup.
@@ -344,6 +402,17 @@ Sequelize.prototype.transaction = function (fn) {
  */
 Sequelize.prototype.literal = function (arg) {
 	return arg;
+};
+
+/**
+ * Always returns a resolved promise
+ *
+ * @return {Promise} will always resolve as a successful authentication
+ */
+Sequelize.prototype.authenticate = function() {
+	return new bluebird(function (resolve) {
+		return resolve();
+	});
 };
 
 module.exports = Sequelize;

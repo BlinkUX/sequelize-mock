@@ -1,5 +1,21 @@
 # Changelog
 
+v0.10.2 - 8ed75d2 - Dec 4th 2017
+  * Fix for DataTypes not being exposed during `sequelize.import` calls
+  * *DEV* Added .editorconfig file to normalize editors and minimize whitespace changes
+
+v0.10.1 - 43cc668 - Nov 20th 2017
+  * Fix for relative file paths in the `sequelize.import` function
+
+v0.10.0 - 0a7f270f - Oct 24th 2017
+  * Add `sequelize.import` support
+  * Add `sequelize.$overrideImport` test functionality to allow overriding imported module paths
+  * Add support for `Model.findAndCount()` and it's alias `Model.findAndCountAll()` (thanks to @TerryMooreII)
+
+v0.9.1 - 3aeaa05 - Sep 21st 2017
+  * Add `authenticate()` to `sequelize` which always resolves (thanks to @vFederer)
+  * Fix a few documentation issues
+
 v0.9.0 - c75d75e - Jul 28th 2017
   * Add DataType mock objects for use with any DataType funcitonality
   * Add support for conditional query result handling (thanks to @scinos)
